@@ -67,24 +67,24 @@ const FOOD = [
     art: "radial-gradient(circle at 30% 30%, #F0B463, transparent 50%), linear-gradient(190deg, #C9762E, #5F2F14)",
     note: "Tous nos burgers : base bœuf, poulet grillé ou poulet croustillant, avec accompagnement au choix.",
     items: [
-      { n: "Canadien", d: "cheddar · bacon régulier ou érable-poivre", pd: "20 $", price: 20, vgroups: BURGER_VG, img: "burger", pair: "Rousse", long: "Le classique bien fait : cheddar fondant et bacon au choix — régulier ou érable-poivre pour la touche sucrée-salée." },
-      { n: "Suisse", d: "fromage suisse · champignons sautés", pd: "20 $", price: 20, vgroups: BURGER_VG, img: "burger", pair: "Irish Red Ale", long: "Fromage suisse et champignons sautés au beurre. Sobre et efficace." },
-      { n: "Parisien", d: "fromage bleu · bacon au choix", pd: "21 $", price: 21, vgroups: BURGER_VG, img: "burger", pair: "Scotch Ale", long: "Le caractère du fromage bleu adouci par le bacon. Pour les palais affirmés." },
-      { n: "Californien", d: "fromage de chèvre · tomates séchées", pd: "21 $", price: 21, vgroups: BURGER_VG, img: "burger", pair: "Saison d'épeautre", long: "Chèvre crémeux et tomates séchées — le plus soleil des dix-huit." },
-      { n: "Américain", d: "cheddar · avocat", pd: "20 $", price: 20, vgroups: BURGER_VG, img: "burger", pair: "Blonde", long: "Cheddar et avocat frais. Simple, riche, satisfaisant." },
-      { n: "Mexicain", d: "oka · jalapeños · salsa · guacamole", pd: "21 $", price: 21, vgroups: BURGER_VG, img: "burger", pair: "India Pale Ale", long: "Oka fondant, jalapeños, salsa et guacamole. Le Québec rencontre le Mexique." },
-      { n: "Aussie", d: "brie · champignons portobello", pd: "21 $", price: 21, vgroups: BURGER_VG, img: "burger", pair: "Down Under", long: "Brie coulant et portobello grillé. L'accord avec la double NEIPA australienne s'imposait." },
-      { n: "Texan", d: "monterey jack · oignons sautés · BBQ à la bière", pd: "20 $", price: 20, vgroups: BURGER_VG, img: "burger", pair: "Rousse", long: "Monterey jack, oignons sautés et sauce BBQ montée à la bière de la maison." },
-      { n: "Sud-Ouest", d: "havarti · guacamole · mayo chipotle · oignons frits", pd: "21 $", price: 21, vgroups: BURGER_VG, img: "burger", pair: "NEIPA Session", long: "Havarti doux, guacamole, mayo chipotle fumée et oignons frits croustillants." },
-      { n: "Big Broue", d: "cheddar · oignons à la bière · tartare · cornichons", pd: "21 $", price: 21, vgroups: BURGER_VG, img: "burger", pair: "Rousse à l'érable", long: "Le burger signature : oignons confits à la bière maison, cheddar, sauce tartare et cornichons." },
-      { n: "Québécois", d: "sauce à poutine · fromage en grains · bacon", pd: "21 $", price: 21, vgroups: BURGER_VG, img: "burger", pair: "Rousse à l'érable", long: "Un burger qui se prend pour une poutine : sauce brune, fromage en grains et bacon. Prévois des serviettes." },
-      { n: "Ruben", d: "suisse · viande fumée · choucroute · tartare", pd: "21 $", price: 21, vgroups: BURGER_VG, img: "burger", pair: "Irish Red Ale", long: "Inspiré du deli : viande fumée, choucroute, suisse et tartare sur boulette." },
-      { n: "Cochon", d: "provolone · porc effiloché · salade de chou · oignons frits", pd: "21 $", price: 21, vgroups: BURGER_VG, img: "burger", pair: "Rousse", long: "Boulette + porc effiloché + provolone + salade de chou crémeuse. Le bien-nommé." },
-      { n: "Thaï", d: "cheddar · bacon · sauce thaï", pd: "20 $", price: 20, vgroups: BURGER_VG, img: "burger", pair: "NEIPA Session", long: "Sauce thaï sucrée-piquante, bacon et cheddar. L'équilibre parfait entre feu et confort." },
-      { n: "Buffalo", d: "cheddar ou bleu · bacon · sauce buffalo", pd: "21 $", price: 21, vgroups: BURGER_VG, img: "burger", pair: "India Pale Ale", long: "Sauce buffalo, bacon, et le choix crucial : cheddar qui calme ou bleu qui en rajoute." },
-      { n: "Cow-boy", d: "cheddar · bacon érable · cornichons frits · sauce cow-boy", pd: "21 $", price: 21, vgroups: BURGER_VG, img: "burger", pair: "Rousse à l'érable", long: "Bacon à l'érable, cornichons frits et sauce cow-boy fumée. Yee-haw." },
-      { n: "New-York", d: "gouda · pommes · bacon poivré", pd: "21 $", price: 21, vgroups: BURGER_VG, img: "burger", pair: "Blanche aux bleuets", long: "Gouda, pommes tranchées et bacon poivré — sucré-salé assumé." },
-      { n: "Végétarien", d: "brie · légumes sautés · mayo pesto · bruschetta", pd: "21 $", price: 21, vgroups: BURGER_VG, img: "burger", pair: "Saison d'épeautre", long: "Galette végé garnie de brie, légumes sautés, mayo pesto, bruschetta et coulis balsamique." },
+      { n: "Canadien", d: "cheddar · bacon régulier ou érable-poivre", pd: "20 $", price: 20, vgroups: BURGER_VG, ing: [["cheese", "Cheddar"], ["bacon", "Bacon au choix"]], pair: "Rousse", long: "Le classique bien fait : cheddar fondant et bacon au choix — régulier ou érable-poivre pour la touche sucrée-salée." },
+      { n: "Suisse", d: "fromage suisse · champignons sautés", pd: "20 $", price: 20, vgroups: BURGER_VG, ing: [["cheese", "Suisse"], ["mushroom", "Champignons"]], pair: "Irish Red Ale", long: "Fromage suisse et champignons sautés au beurre. Sobre et efficace." },
+      { n: "Parisien", d: "fromage bleu · bacon au choix", pd: "21 $", price: 21, vgroups: BURGER_VG, ing: [["cheese", "Bleu"], ["bacon", "Bacon"]], pair: "Scotch Ale", long: "Le caractère du fromage bleu adouci par le bacon. Pour les palais affirmés." },
+      { n: "Californien", d: "fromage de chèvre · tomates séchées", pd: "21 $", price: 21, vgroups: BURGER_VG, ing: [["cheese", "Chèvre"], ["tomato", "Tomates séchées"]], pair: "Saison d'épeautre", long: "Chèvre crémeux et tomates séchées — le plus soleil des dix-huit." },
+      { n: "Américain", d: "cheddar · avocat", pd: "20 $", price: 20, vgroups: BURGER_VG, ing: [["cheese", "Cheddar"], ["avocado", "Avocat"]], pair: "Blonde", long: "Cheddar et avocat frais. Simple, riche, satisfaisant." },
+      { n: "Mexicain", d: "oka · jalapeños · salsa · guacamole", pd: "21 $", price: 21, vgroups: BURGER_VG, ing: [["cheese", "Oka"], ["chili", "Jalapeños"], ["avocado", "Guacamole"], ["tomato", "Salsa"]], pair: "India Pale Ale", long: "Oka fondant, jalapeños, salsa et guacamole. Le Québec rencontre le Mexique." },
+      { n: "Aussie", d: "brie · champignons portobello", pd: "21 $", price: 21, vgroups: BURGER_VG, ing: [["cheese", "Brie"], ["mushroom", "Portobello"]], pair: "Down Under", long: "Brie coulant et portobello grillé. L'accord avec la double NEIPA australienne s'imposait." },
+      { n: "Texan", d: "monterey jack · oignons sautés · BBQ à la bière", pd: "20 $", price: 20, vgroups: BURGER_VG, ing: [["cheese", "Monterey jack"], ["onion", "Oignons sautés"], ["drop", "BBQ à la bière"]], pair: "Rousse", long: "Monterey jack, oignons sautés et sauce BBQ montée à la bière de la maison." },
+      { n: "Sud-Ouest", d: "havarti · guacamole · mayo chipotle · oignons frits", pd: "21 $", price: 21, vgroups: BURGER_VG, ing: [["cheese", "Havarti"], ["avocado", "Guacamole"], ["drop", "Mayo chipotle"], ["rings", "Oignons frits"]], pair: "NEIPA Session", long: "Havarti doux, guacamole, mayo chipotle fumée et oignons frits croustillants." },
+      { n: "Big Broue", d: "cheddar · oignons à la bière · tartare · cornichons", pd: "21 $", price: 21, vgroups: BURGER_VG, ing: [["cheese", "Cheddar"], ["onion", "Oignons à la bière"], ["drop", "Tartare"], ["pickle", "Cornichons"]], pair: "Rousse à l'érable", long: "Le burger signature : oignons confits à la bière maison, cheddar, sauce tartare et cornichons." },
+      { n: "Québécois", d: "sauce à poutine · fromage en grains · bacon", pd: "21 $", price: 21, vgroups: BURGER_VG, ing: [["curds", "Fromage en grains"], ["drop", "Sauce à poutine"], ["bacon", "Bacon"]], pair: "Rousse à l'érable", long: "Un burger qui se prend pour une poutine : sauce brune, fromage en grains et bacon. Prévois des serviettes." },
+      { n: "Ruben", d: "suisse · viande fumée · choucroute · tartare", pd: "21 $", price: 21, vgroups: BURGER_VG, ing: [["cheese", "Suisse"], ["smoked", "Viande fumée"], ["cabbage", "Choucroute"], ["pickle", "Cornichons"]], pair: "Irish Red Ale", long: "Inspiré du deli : viande fumée, choucroute, suisse et tartare sur boulette." },
+      { n: "Cochon", d: "provolone · porc effiloché · salade de chou · oignons frits", pd: "21 $", price: 21, vgroups: BURGER_VG, ing: [["cheese", "Provolone"], ["pork", "Porc effiloché"], ["cabbage", "Salade de chou"], ["rings", "Oignons frits"]], pair: "Rousse", long: "Boulette + porc effiloché + provolone + salade de chou crémeuse. Le bien-nommé." },
+      { n: "Thaï", d: "cheddar · bacon · sauce thaï", pd: "20 $", price: 20, vgroups: BURGER_VG, ing: [["cheese", "Cheddar"], ["bacon", "Bacon"], ["drop", "Sauce thaï"]], pair: "NEIPA Session", long: "Sauce thaï sucrée-piquante, bacon et cheddar. L'équilibre parfait entre feu et confort." },
+      { n: "Buffalo", d: "cheddar ou bleu · bacon · sauce buffalo", pd: "21 $", price: 21, vgroups: BURGER_VG, ing: [["flame", "Sauce buffalo"], ["cheese", "Cheddar ou bleu"], ["bacon", "Bacon"]], pair: "India Pale Ale", long: "Sauce buffalo, bacon, et le choix crucial : cheddar qui calme ou bleu qui en rajoute." },
+      { n: "Cow-boy", d: "cheddar · bacon érable · cornichons frits · sauce cow-boy", pd: "21 $", price: 21, vgroups: BURGER_VG, ing: [["maple", "Bacon érable"], ["pickle", "Cornichons frits"], ["drop", "Sauce cow-boy"]], pair: "Rousse à l'érable", long: "Bacon à l'érable, cornichons frits et sauce cow-boy fumée. Yee-haw." },
+      { n: "New-York", d: "gouda · pommes · bacon poivré", pd: "21 $", price: 21, vgroups: BURGER_VG, ing: [["cheese", "Gouda"], ["apple", "Pommes"], ["bacon", "Bacon poivré"]], pair: "Blanche aux bleuets", long: "Gouda, pommes tranchées et bacon poivré — sucré-salé assumé." },
+      { n: "Végétarien", d: "brie · légumes sautés · mayo pesto · bruschetta", pd: "21 $", price: 21, vgroups: BURGER_VG, ing: [["cheese", "Brie"], ["herb", "Mayo pesto"], ["tomato", "Bruschetta"]], pair: "Saison d'épeautre", long: "Galette végé garnie de brie, légumes sautés, mayo pesto, bruschetta et coulis balsamique." },
     ],
   },
   {
@@ -197,6 +197,32 @@ const BEERS = [
 
 const PALETTE_AXES = [["am", "Amertume"], ["su", "Sucré"], ["co", "Corps"], ["fr", "Fruité"]];
 
+/* ————— Icônes ingrédients — traits fins, dessinées en code ————— */
+const ICONS = {
+  cheese: '<path d="M3.5 16.5 17 8.5l3.5 2.8v5.2H3.5z"/><circle cx="9" cy="14.5" r="1.1"/><circle cx="14" cy="13" r="0.9"/>',
+  curds: '<circle cx="7.5" cy="14.5" r="2.6"/><circle cx="12.5" cy="9.5" r="2.4"/><circle cx="16.5" cy="15" r="2.6"/>',
+  bacon: '<path d="M4 8.5c2-2.2 3.5 2 5.5 0s3.5 2 5.5 0 3-1.6 5-2.3"/><path d="M4 12.5c2-2.2 3.5 2 5.5 0s3.5 2 5.5 0 3-1.6 5-2.3"/><path d="M4 16.5c2-2.2 3.5 2 5.5 0s3.5 2 5.5 0 3-1.6 5-2.3"/>',
+  mushroom: '<path d="M4.5 12a7.5 6 0 0 1 15 0z"/><path d="M9.8 12.2v4.3a2.2 2.2 0 0 0 4.4 0v-4.3"/>',
+  onion: '<path d="M12 5.8c3.6 2 5.6 4.7 5.6 7.7a5.6 5.6 0 0 1-11.2 0c0-3 2-5.7 5.6-7.7z"/><path d="M12 5.8c1.3 2 2.2 4.9 2.2 7.9"/><path d="M12 5.8c-1.3 2-2.2 4.9-2.2 7.9"/><path d="M12 3v2.8"/>',
+  rings: '<circle cx="9.2" cy="12" r="4.8"/><circle cx="14.8" cy="12" r="4.8"/>',
+  avocado: '<path d="M12 4.5c2.8 3 5.5 5.7 5.5 9.3a5.5 5.5 0 0 1-11 0c0-3.6 2.7-6.3 5.5-9.3z"/><circle cx="12" cy="14.5" r="2.3"/>',
+  chili: '<path d="M18.5 8.5c0 6-4.8 9.5-10.5 9.5-1.4 0-2-1.3-.8-1.9 4.6-.6 7.3-3.6 7.3-7.6"/><path d="M14.5 8.5c0-2 1.8-3.2 4-3"/>',
+  tomato: '<circle cx="12" cy="13.5" r="6"/><path d="M12 7.5V4.5"/><path d="M12 7.5l2-1.6"/><path d="M12 7.5l-2-1.6"/>',
+  apple: '<path d="M12 7.5c-3.6-1.8-6.5.7-6.5 4.3S8.5 20 12 20s6.5-4.6 6.5-8.2-2.9-6.1-6.5-4.3z"/><path d="M12 7.5c0-2 1-3.2 2.5-4"/>',
+  pickle: '<path d="M9 4.5h6c0 6.2 0 11.5-3 15.5-3-4-3-9.3-3-15.5z"/><circle cx="11" cy="9" r="0.5"/><circle cx="13" cy="13" r="0.5"/><circle cx="11.5" cy="16.5" r="0.5"/>',
+  cabbage: '<circle cx="12" cy="12.5" r="6.8"/><path d="M12 5.7c-2.8 3.2-2.8 10.4 0 13.6"/><path d="M12 5.7c2.8 3.2 2.8 10.4 0 13.6"/><path d="M5.4 11h13.2"/>',
+  smoked: '<rect x="5" y="5.5" width="14" height="3.4" rx="1.7"/><rect x="5" y="10.3" width="14" height="3.4" rx="1.7"/><rect x="5" y="15.1" width="14" height="3.4" rx="1.7"/>',
+  pork: '<path d="M4 14.5c2.2-3 3.8 1.2 6-1.6s3.8 1.2 6-1.6 2.6-2 4-2.6"/><path d="M5.5 18.5h13"/>',
+  maple: '<path d="M12 3.5l1.6 3.2 3.4-.8-.8 3.3 3.3 1.8-3.3 1.8.8 3.3-3.4-.8-1.6 3.2-1.6-3.2-3.4.8.8-3.3-3.3-1.8 3.3-1.8-.8-3.3 3.4.8z"/>',
+  flame: '<path d="M12 3.5c.8 3.6 4.8 5 4.8 9.4a4.8 4.8 0 0 1-9.6 0c0-2.7 1.7-4 2.7-6.4.9 1.5 2.1 2 2.1-3z"/>',
+  drop: '<path d="M12 4.5c2.8 3.6 5.5 6.4 5.5 10a5.5 5.5 0 0 1-11 0c0-3.6 2.7-6.4 5.5-10z"/>',
+  herb: '<path d="M12 20.5V8"/><path d="M12 12.5c-3 0-5.2-2.2-5.2-5.2 3 0 5.2 2.2 5.2 5.2z"/><path d="M12 16.5c3 0 5.2-2.2 5.2-5.2-3 0-5.2 2.2-5.2 5.2z"/>',
+};
+
+function icon(name, size = 24) {
+  return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ""}</svg>`;
+}
+
 const $ = (sel, el = document) => el.querySelector(sel);
 const totalItems = FOOD.reduce((n, s) => n + s.items.length, 0) + BEERS.reduce((n, f) => n + f.items.length, 0);
 let CREDITS = {};
@@ -261,8 +287,11 @@ function renderFood() {
       row.type = "button";
       row.dataset.q = itemQ(item);
       const cfg = (item.sizes || item.vgroups || item.extras) ? `<span class="cfg-hint">personnalisable</span>` : "";
+      const mini = item.ing
+        ? `<div class="ing-mini" aria-hidden="true">${item.ing.map(([ic]) => icon(ic, 15)).join("")}</div>`
+        : "";
       row.innerHTML =
-        `<div class="m-main"><div class="m-name">${item.n}</div>${item.d ? `<div class="m-desc">${item.d}</div>` : ""}</div>` +
+        `<div class="m-main"><div class="m-name">${item.n}</div>${item.d ? `<div class="m-desc">${item.d}</div>` : ""}${mini}</div>` +
         `<div class="m-right"><div class="m-price">${item.pd}</div>${cfg}</div>`;
       row.addEventListener("click", () => openFoodSheet(s, item, row));
       card.appendChild(row);
@@ -345,9 +374,13 @@ function sheetHTML(entry) {
       `<p class="sheet-desc">${long}</p>`;
   }
   const it = entry.item;
-  const photo = it.img
-    ? `<div class="sheet-photo"><img src="img/${it.img}.jpg" alt="" loading="lazy"></div>`
-    : `<div class="sheet-photo art-only" style="background:${entry.ctx.art}"></div>`;
+  const photo = it.ing
+    ? `<div class="ing-hero${it.ing.length > 3 ? " n4" : ""}" role="img" aria-label="Ingrédients : ${it.ing.map((x) => x[1]).join(", ")}">` +
+      it.ing.map(([ic, label]) => `<span class="ing-cell">${icon(ic, 38)}<span class="ing-l">${label}</span></span>`).join('<span class="ing-sep" aria-hidden="true"></span>') +
+      `</div>`
+    : it.img
+      ? `<div class="sheet-photo"><img src="img/${it.img}.jpg" alt="" loading="lazy"></div>`
+      : `<div class="sheet-photo art-only" style="background:${entry.ctx.art}"></div>`;
   let html = photo +
     `<div class="sheet-head"><h2 id="sheet-title">${it.n}</h2><span class="sheet-price" id="sheet-total" aria-live="polite">${fmt(computeTotal(it))}</span></div>` +
     `<p class="sheet-kicker">${entry.ctx.name} · ${entry.ctx.sub}</p>` +
