@@ -17,7 +17,7 @@
   --faint: #9A948B;
   --tab-idle: #6B6660;
   --amber: #E8A33C;
-  --amber-deep: #C9762E;
+  --amber-deep: #8A4512;
   --line: rgba(20, 17, 16, 0.07);
   --shadow: 0 10px 30px rgba(20, 17, 16, 0.07);
   --radius: 24px;
@@ -444,6 +444,105 @@ body.sheet-open { overflow: hidden; }
   margin: 16px 0 0;
 }
 .sheet-credit a { color: var(--muted); }
+
+/* ————— Configurator (formats, choix, extras) ————— */
+.m-right { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex: none; }
+.cfg-hint {
+  font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--amber-deep);
+}
+.cfg { margin-top: 18px; }
+.cfg h3, .pairing h3 {
+  font-family: var(--body);
+  font-size: 12px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--amber-deep);
+  margin: 0 0 8px;
+}
+.seg {
+  display: flex; gap: 6px;
+  background: var(--bg);
+  border-radius: 18px;
+  padding: 4px;
+}
+.seg-b {
+  flex: 1;
+  min-height: 48px;
+  border: none; border-radius: 14px;
+  background: none; color: var(--ink);
+  font: inherit; font-weight: 600; font-size: 14.5px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+  cursor: pointer;
+}
+.seg-b small { font-size: 12px; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
+.seg-b.on { background: var(--card); box-shadow: 0 2px 8px rgba(20, 17, 16, 0.12); }
+.seg-b.on small { color: var(--amber-deep); }
+.seg-b:focus-visible, .opt:focus-visible { outline: 3px solid var(--amber); outline-offset: 1px; }
+.opts { display: flex; flex-direction: column; gap: 8px; }
+.opt {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  min-height: 48px;
+  padding: 8px 14px;
+  border: 1.5px solid rgba(20, 17, 16, 0.16);
+  border-radius: 14px;
+  background: none; color: var(--ink);
+  font: inherit; font-size: 14.5px; font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+}
+.opt .opt-p {
+  font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 13px; font-weight: 700;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.opt.on {
+  border-color: var(--amber-deep);
+  background: var(--chip-bg);
+  font-weight: 650;
+}
+.opt.on .opt-p { color: var(--amber-deep); }
+.opt.x.on::after { content: "✓"; color: var(--amber-deep); font-weight: 800; margin-left: 2px; }
+.opt:active { opacity: 0.7; }
+
+/* ————— Accord bière ————— */
+.pairing { margin-top: 18px; }
+.pair-back {
+  display: inline-flex; align-items: center;
+  min-height: 44px;
+  padding: 0 14px;
+  margin: 2px 0 4px -8px;
+  border: none; border-radius: 14px;
+  background: none;
+  font: inherit; font-size: 14px; font-weight: 700;
+  color: var(--amber-deep);
+  cursor: pointer;
+}
+.pair-back:active { opacity: 0.6; }
+.pair-back:focus-visible { outline: 3px solid var(--amber); outline-offset: 1px; }
+.pair-card {
+  width: 100%;
+  display: flex; align-items: center; gap: 12px;
+  min-height: 60px;
+  padding: 10px 14px;
+  border: none; border-radius: 16px;
+  background: var(--bg);
+  font: inherit; color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.pair-card:active { opacity: 0.7; }
+.pair-card:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
+.pair-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.pair-go {
+  font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 13px; font-weight: 700;
+  color: var(--amber-deep);
+  white-space: nowrap;
+}
 
 /* ————— Beer glass & palette ————— */
 .sheet-glass-wrap {

@@ -1,150 +1,147 @@
 // broue — data + rendering. Menu réel du Brouemont (lebrouemont.com), août 2026.
-// Item: [nom, sous-titre, prix, cléPhoto, description]
+// Item : { n, d, pd, price|sizes, vgroups, extras, pair, img, long }
+//   pd = prix affiché en liste · sizes = [[label, prix]] · vgroups = [{t, opts:[[label, +delta]]}]
+//   extras = [[label, +prix]] · pair = nom d'une bière maison
+
+const BURGER_VG = [
+  { t: "Base", opts: [["Bœuf", 0], ["Poulet grillé", 0], ["Poulet croustillant", 0]] },
+  { t: "Accompagnement", opts: [["Frites-mayo", 0], ["Salade du chef", 0], ["Salade César", 0]] },
+];
+const SAND_VG = [{ t: "Pain", opts: [["Baguette", 0], ["Multigrain", 0], ["Wrap", 0]] }];
+const GARNITURES = [["Avocat", 5], ["Légumes sautés", 6], ["Fromage bleu", 7], ["Fromage de chèvre", 7], ["Poulet grillé", 7], ["Poulet thaï", 7], ["Poulet épicé", 8], ["Porc effiloché", 8], ["Canard", 8], ["Saumon grillé", 10]];
+const SIDES = [["Rondelles d'oignon", 3], ["Patates sucrées", 4], ["Salade grecque", 4], ["Poutine", 5]];
 
 const FOOD = [
   {
     id: "entrees", name: "Entrées", sub: "pour ouvrir",
     art: "radial-gradient(circle at 30% 25%, #F6C368, transparent 55%), linear-gradient(160deg, #E8A33C, #A54A1C)",
     items: [
-      ["Escargots", "mozzarella · beurre à l'ail", "10 $", "escargots", "Gratinés au four dans un beurre à l'ail généreux, sous une couverture de mozzarella fondante. Du pain pour saucer serait une bonne idée."],
-      ["Calmars frits", "", "14 $", "calmars", "Anneaux de calmar panés, frits jusqu'à dorés, servis avec trempette. Croustillants dehors, tendres dedans."],
-      ["Soupe à l'oignon", "", "10 $", "soupe-oignon", "Le classique réconfort : oignons caramélisés, bouillon riche, croûton et fromage gratiné qui déborde du bol."],
-      ["Crevettes panées thaï", "", "10 $", null, "Crevettes croustillantes enrobées de sauce thaï sucrée-piquante. Dangereusement faciles à finir."],
-      ["Bol de chili", "", "15 $", "chili", "Chili maison mijoté, bien garni de bœuf et de haricots. Un repas en soi avec une rousse."],
-      ["Pain à l'ail", "gratiné +2 $", "7 $", "pain-ail", "Baguette grillée au beurre à l'ail. Ajoute le gratiné — tu ne le regretteras pas."],
-      ["Bruschettas gratinées", "au fromage de chèvre 12 $", "10 $", null, "Tomates fraîches, ail et basilic sur pain grillé, gratinées. En version chèvre pour les connaisseurs."],
-      ["Pelures de patates", "avec porc effiloché 15 $", "10 $", null, "Pelures croustillantes garnies de fromage et bacon, crème sure à côté. La version porc effiloché joue dans une autre ligue."],
-      ["Bâtonnets de fromage (6)", "sauce marinara", "8 $", null, "Six bâtonnets panés au fromage fondant, sauce marinara pour tremper."],
-      ["Popcurds", "", "12 $", null, "Fromage en grains pané et frit — le péché mignon québécois en format bouchée."],
-      ["Cornichons frits", "", "8 $", null, "Tranches de cornichon panées et frites. Salé, croustillant, acidulé — parfait avec une blonde."],
-      ["Poppers (6)", "jalapeños · crème sure", "8 $", null, "Jalapeños farcis au fromage, panés et frits. La crème sure calme le jeu."],
-      ["Rondelles d'oignon", "", "8 $", "rondelles", "Rondelles d'oignon en panure dorée, frites à la commande."],
-      ["Ailes de poulet", "6 ou 12 · nature ou buffalo", "10 $ / 17 $", "ailes", "Ailes bien croustillantes, nature ou enrobées de sauce buffalo. Sauces au choix : bleu, ranch, BBQ, miel, thaï…"],
+      { n: "Escargots", d: "mozzarella · beurre à l'ail", pd: "10 $", price: 10, img: "escargots", pair: "Blonde", long: "Gratinés au four dans un beurre à l'ail généreux, sous une couverture de mozzarella fondante. Du pain pour saucer serait une bonne idée." },
+      { n: "Calmars frits", d: "", pd: "14 $", price: 14, img: "calmars", pair: "Pilsner", long: "Anneaux de calmar panés, frits jusqu'à dorés, servis avec trempette. Croustillants dehors, tendres dedans." },
+      { n: "Soupe à l'oignon", d: "", pd: "10 $", price: 10, img: "soupe-oignon", pair: "Rousse", long: "Le classique réconfort : oignons caramélisés, bouillon riche, croûton et fromage gratiné qui déborde du bol." },
+      { n: "Crevettes panées thaï", d: "", pd: "10 $", price: 10, pair: "NEIPA Session", long: "Crevettes croustillantes enrobées de sauce thaï sucrée-piquante. Dangereusement faciles à finir." },
+      { n: "Bol de chili", d: "", pd: "15 $", price: 15, img: "chili", pair: "Rousse", long: "Chili maison mijoté, bien garni de bœuf et de haricots. Un repas en soi avec une rousse." },
+      { n: "Pain à l'ail", d: "", pd: "7–9 $", price: 7, vgroups: [{ t: "Style", opts: [["Nature", 0], ["Gratiné", 2]] }], img: "pain-ail", pair: "Blonde", long: "Baguette grillée au beurre à l'ail. Prends le gratiné — tu ne le regretteras pas." },
+      { n: "Bruschettas", d: "tomates · ail · basilic", pd: "10–12 $", price: 10, vgroups: [{ t: "Version", opts: [["Gratinées", 0], ["Fromage de chèvre", 2]] }], pair: "Saison d'épeautre", long: "Tomates fraîches, ail et basilic sur pain grillé. La version chèvre ajoute une couche de crémeux qui vaut ses deux piasses." },
+      { n: "Pelures de patates", d: "fromage · bacon · crème sure", pd: "10–15 $", price: 10, vgroups: [{ t: "Version", opts: [["Classiques", 0], ["Porc effiloché", 5]] }], pair: "Rousse", long: "Pelures croustillantes garnies de fromage et bacon. La version porc effiloché joue dans une autre ligue." },
+      { n: "Bâtonnets de fromage (6)", d: "sauce marinara", pd: "8 $", price: 8, pair: "Pilsner", long: "Six bâtonnets panés au fromage fondant, sauce marinara pour tremper." },
+      { n: "Popcurds", d: "", pd: "12 $", price: 12, pair: "Blonde", long: "Fromage en grains pané et frit — le péché mignon québécois en format bouchée." },
+      { n: "Cornichons frits", d: "", pd: "8 $", price: 8, pair: "Gose", long: "Tranches de cornichon panées et frites. Salé, croustillant, acidulé — l'accord avec la Gose est réel." },
+      { n: "Poppers (6)", d: "jalapeños · crème sure", pd: "8 $", price: 8, pair: "Framboise et miel", long: "Jalapeños farcis au fromage, panés et frits. Le sucré de la Framboise et miel éteint le feu." },
+      { n: "Rondelles d'oignon", d: "", pd: "8 $", price: 8, img: "rondelles", pair: "Blonde", long: "Rondelles d'oignon en panure dorée, frites à la commande." },
+      { n: "Ailes de poulet", d: "sauces au choix", pd: "10–17 $", sizes: [["6 ailes", 10], ["12 ailes", 17]], vgroups: [{ t: "Enrobage", opts: [["Nature", 0], ["Buffalo", 0]] }], img: "ailes", pair: "India Pale Ale", long: "Ailes bien croustillantes, nature ou enrobées de sauce buffalo. Trempettes au choix : bleu, ranch, BBQ, miel, thaï, aigre-douce, épicée ou crème sure." },
     ],
   },
   {
-    id: "combos", name: "Combos", sub: "à partager",
-    art: "radial-gradient(circle at 70% 70%, #FBDFA8, transparent 50%), linear-gradient(200deg, #D98A3E, #8A4512)",
-    items: [
-      ["6 ailes + frites", "", "14 $", "ailes", "Six ailes croustillantes et une portion de frites. Le duo d'après-ski par excellence."],
-      ["Bruschettas (4) + bâtonnets (2)", "version chèvre 14 $", "10 $", null, "Le meilleur des deux mondes en une assiette à partager — ou pas."],
-      ["Pelures (2) + bâtonnets (4)", "version porc effiloché 14 $", "10 $", null, "Pelures garnies et bâtonnets de fromage, pour les tables qui n'arrivent pas à choisir."],
-    ],
-  },
-  {
-    id: "salades", name: "Salades", sub: "petite / grande",
-    art: "radial-gradient(circle at 30% 70%, #B9C46A, transparent 55%), linear-gradient(150deg, #8FA341, #4E6323)",
-    note: "Garnitures : avocat 5 $ · légumes sautés 6 $ · bleu ou chèvre 7 $ · poulet grillé ou thaï 7 $ · poulet épicé, porc effiloché ou canard 8 $ · saumon grillé 10 $",
-    items: [
-      ["Salade du chef", "verdure · tomates · concombre · oignons · olives · pousses", "9 $ / 15 $", null, "Verdure fraîche, tomates, concombre, oignons, olives noires et pousses germées. Ajoute une protéine pour en faire un repas."],
-      ["Salade César", "romaine · bacon · croûtons · parmesan · mozzarella", "9 $ / 15 $", "cesar", "Romaine croquante, bacon, croûtons maison, parmesan et mozzarella dans une vraie sauce césar."],
-      ["Salade grecque", "tomates · concombres · féta · olives · oignons", "12 $ / 18 $", "grecque", "Tomates, concombres, féta, olives noires et oignons rouges — simple, fraîche, généreuse en féta."],
-    ],
-  },
-  {
-    id: "nachos", name: "Nachos", sub: "petit / gros",
+    id: "partager", name: "À partager", sub: "pour la table",
     art: "radial-gradient(circle at 65% 30%, #F2CC5B, transparent 55%), linear-gradient(210deg, #E0A93F, #B3572D)",
     items: [
-      ["Nachos classiques", "salsa · olives · jalapeños · mozzarella · cheddar", "10 $ / 15 $", "nachos", "Montagne de tortillas sous mozzarella et cheddar fondus, salsa, olives et jalapeños. Format gros : viens accompagné."],
-      ["Au poulet épicé", "", "15 $ / 20 $", "nachos", "Les nachos classiques, chargés de poulet épicé. Ça réchauffe."],
-      ["Au porc effiloché", "", "15 $ / 20 $", "nachos", "Porc effiloché fondant sur le lit de tortillas gratinées. Le préféré des habitués."],
-      ["S&M", "salsa · bleu · bacon · mozzarella · cheddar", "15 $ / 20 $", "nachos", "La version corsée : fromage bleu et bacon par-dessus le duo mozzarella-cheddar. Pour les palais qui n'ont peur de rien."],
+      { n: "Nachos", d: "salsa · olives · jalapeños · mozzarella · cheddar", pd: "10–20 $", sizes: [["Petit", 10], ["Gros", 15]], vgroups: [{ t: "Garniture", opts: [["Classique", 0], ["Poulet épicé", 5], ["Porc effiloché", 5], ["S&M — bleu et bacon", 5]] }], img: "nachos", pair: "Pilsner", long: "Montagne de tortillas sous mozzarella et cheddar fondus, salsa, olives et jalapeños. Choisis ta garniture — le porc effiloché est le préféré des habitués, la S&M (fromage bleu et bacon) est pour les palais qui n'ont peur de rien." },
+      { n: "6 ailes + frites", d: "", pd: "14 $", price: 14, img: "ailes", pair: "India Pale Ale", long: "Six ailes croustillantes et une portion de frites. Le duo d'après-ski par excellence." },
+      { n: "Bruschettas (4) + bâtonnets (2)", d: "", pd: "10–14 $", price: 10, vgroups: [{ t: "Version", opts: [["Régulière", 0], ["Fromage de chèvre", 4]] }], pair: "Saison d'épeautre", long: "Le meilleur des deux mondes en une assiette à partager — ou pas." },
+      { n: "Pelures (2) + bâtonnets (4)", d: "", pd: "10–14 $", price: 10, vgroups: [{ t: "Version", opts: [["Régulière", 0], ["Porc effiloché", 4]] }], pair: "Rousse", long: "Pelures garnies et bâtonnets de fromage, pour les tables qui n'arrivent pas à choisir." },
     ],
   },
   {
-    id: "poutines", name: "Poutines", sub: "le classique",
-    art: "radial-gradient(circle at 40% 30%, #F6DFA0, transparent 55%), linear-gradient(170deg, #D9A85A, #6E4A22)",
-    note: "Poutine ou mac&cheese garni — 20 $ : bacon · poulet épicé, thaï ou buffalo · bouchées de poulet · viande fumée 5 oz · porc effiloché. Canard (bacon érable, coulis balsamique) ou bavette — 24 $.",
+    id: "salades", name: "Salades", sub: "fraîches et garnissables",
+    art: "radial-gradient(circle at 30% 70%, #B9C46A, transparent 55%), linear-gradient(150deg, #8FA341, #4E6323)",
     items: [
-      ["Frites", "", "6 $", null, "Frites fraîches coupées maison, bien dorées. Choix de mayo : régulière, ail, cari, épicée ou raifort."],
-      ["Patates sucrées", "", "8 $", null, "Frites de patates douces, croustillantes et légèrement sucrées."],
-      ["Poutine", "", "10 $ / 14 $", "poutine", "Frites, fromage en grains qui fait skouik et sauce brune chaude. La base, faite comme il faut."],
-      ["Poutine angus", "sauce · bœuf · oignons et champignons sautés", "20 $", "poutine", "Poutine chargée de bœuf angus, oignons et champignons sautés. Le repas complet en un bol."],
+      { n: "Salade du chef", d: "verdure · tomates · concombre · oignons · olives · pousses", pd: "9 $ / 15 $", sizes: [["Petite", 9], ["Grande", 15]], extras: GARNITURES, pair: "Radler Sour", long: "Verdure fraîche, tomates, concombre, oignons, olives noires et pousses germées. Ajoute une protéine pour en faire un repas." },
+      { n: "Salade César", d: "romaine · bacon · croûtons · parmesan · mozzarella", pd: "9 $ / 15 $", sizes: [["Petite", 9], ["Grande", 15]], extras: GARNITURES, img: "cesar", pair: "Blonde", long: "Romaine croquante, bacon, croûtons maison, parmesan et mozzarella dans une vraie sauce césar." },
+      { n: "Salade grecque", d: "tomates · concombres · féta · olives · oignons", pd: "12 $ / 18 $", sizes: [["Petite", 12], ["Grande", 18]], extras: GARNITURES, img: "grecque", pair: "Gose", long: "Tomates, concombres, féta, olives noires et oignons rouges — simple, fraîche, généreuse en féta." },
+    ],
+  },
+  {
+    id: "poutines", name: "Frites & poutines", sub: "le classique",
+    art: "radial-gradient(circle at 40% 30%, #F6DFA0, transparent 55%), linear-gradient(170deg, #D9A85A, #6E4A22)",
+    items: [
+      { n: "Frites", d: "", pd: "6 $", price: 6, vgroups: [{ t: "Mayo", opts: [["Régulière", 0], ["Ail", 0], ["Cari", 0], ["Épicée", 0], ["Raifort", 0]] }], pair: "Pilsner", long: "Frites fraîches coupées maison, bien dorées, avec la mayo de ton choix." },
+      { n: "Patates sucrées", d: "", pd: "8 $", price: 8, pair: "Rousse à l'érable", long: "Frites de patates douces, croustillantes et légèrement sucrées." },
+      { n: "Poutine", d: "fromage en grains · sauce brune", pd: "10 $ / 14 $", sizes: [["Petite", 10], ["Grande", 14]], img: "poutine", pair: "Rousse", long: "Frites, fromage en grains qui fait skouik et sauce brune chaude. La base, faite comme il faut." },
+      { n: "Poutine angus", d: "bœuf · oignons et champignons sautés", pd: "20 $", price: 20, img: "poutine", pair: "Scotch Ale", long: "Poutine chargée de bœuf angus, oignons et champignons sautés. Le repas complet en un bol." },
+      { n: "Poutine ou mac&cheese garni", d: "choix de base et de viande", pd: "20–24 $", price: 20, vgroups: [{ t: "Base", opts: [["Poutine", 0], ["Mac&cheese", 0]] }, { t: "Viande", opts: [["Bacon au choix", 0], ["Poulet épicé", 0], ["Poulet thaï", 0], ["Poulet buffalo", 0], ["Bouchées de poulet", 0], ["Viande fumée 5 oz", 0], ["Porc effiloché", 0], ["Canard — bacon érable, balsamique", 4], ["Bavette", 4]] }], img: "poutine", pair: "Rousse à l'érable", long: "Choisis ta base — poutine ou mac&cheese — puis ta viande. Le canard vient avec bacon à l'érable et coulis balsamique." },
     ],
   },
   {
     id: "burgers", name: "Burgers", sub: "18 façons",
     art: "radial-gradient(circle at 30% 30%, #F0B463, transparent 50%), linear-gradient(190deg, #C9762E, #5F2F14)",
-    note: "Bœuf, poulet grillé ou poulet croustillant. Servis avec salade du chef ou César, ou frites-mayo.",
+    note: "Tous nos burgers : base bœuf, poulet grillé ou poulet croustillant, avec accompagnement au choix.",
     items: [
-      ["Canadien", "cheddar · bacon régulier ou érable-poivre", "20 $", "burger", "Le classique bien fait : cheddar fondant et bacon au choix — régulier ou érable-poivre pour la touche sucrée-salée."],
-      ["Suisse", "fromage suisse · champignons sautés", "20 $", "burger", "Fromage suisse et champignons sautés au beurre. Sobre et efficace."],
-      ["Parisien", "fromage bleu · bacon au choix", "21 $", "burger", "Le caractère du fromage bleu adouci par le bacon. Pour les palais affirmés."],
-      ["Californien", "fromage de chèvre · tomates séchées", "21 $", "burger", "Chèvre crémeux et tomates séchées — le plus soleil des dix-huit."],
-      ["Américain", "cheddar · avocat", "20 $", "burger", "Cheddar et avocat frais. Simple, riche, satisfaisant."],
-      ["Mexicain", "oka · jalapeños · salsa · guacamole", "21 $", "burger", "Oka fondant, jalapeños, salsa et guacamole. Le Québec rencontre le Mexique."],
-      ["Aussie", "brie · champignons portobello", "21 $", "burger", "Brie coulant et portobello grillé — le plus gastronomique du lot."],
-      ["Texan", "monterey jack · oignons sautés · BBQ à la bière", "20 $", "burger", "Monterey jack, oignons sautés et sauce BBQ montée à la bière de la maison."],
-      ["Sud-Ouest", "havarti · guacamole · mayo chipotle · oignons frits", "21 $", "burger", "Havarti doux, guacamole, mayo chipotle fumée et oignons frits croustillants."],
-      ["Big Broue", "cheddar · oignons à la bière · tartare · cornichons", "21 $", "burger", "Le burger signature : oignons confits à la bière maison, cheddar, sauce tartare et cornichons."],
-      ["Québécois", "sauce à poutine · fromage en grains · bacon", "21 $", "burger", "Un burger qui se prend pour une poutine : sauce brune, fromage en grains et bacon. Prévois des serviettes."],
-      ["Ruben", "suisse · viande fumée · choucroute · tartare", "21 $", "burger", "Inspiré du deli : viande fumée, choucroute, suisse et tartare sur boulette."],
-      ["Cochon", "provolone · porc effiloché · salade de chou · oignons frits", "21 $", "burger", "Boulette + porc effiloché + provolone + salade de chou crémeuse. Le bien-nommé."],
-      ["Thaï", "cheddar · bacon · sauce thaï", "20 $", "burger", "Sauce thaï sucrée-piquante, bacon et cheddar. L'équilibre parfait entre feu et confort."],
-      ["Buffalo", "cheddar ou bleu · bacon · sauce buffalo", "21 $", "burger", "Sauce buffalo, bacon, et le choix crucial : cheddar qui calme ou bleu qui en rajoute."],
-      ["Cow-boy", "cheddar · bacon érable · cornichons frits · sauce cow-boy", "21 $", "burger", "Bacon à l'érable, cornichons frits et sauce cow-boy fumée. Yee-haw."],
-      ["New-York", "gouda · pommes · bacon poivré", "21 $", "burger", "Gouda, pommes tranchées et bacon poivré — sucré-salé assumé."],
-      ["Végétarien", "brie · légumes sautés · mayo pesto · bruschetta", "21 $", "burger", "Galette végé garnie de brie, légumes sautés, mayo pesto, bruschetta et coulis balsamique."],
+      { n: "Canadien", d: "cheddar · bacon régulier ou érable-poivre", pd: "20 $", price: 20, vgroups: BURGER_VG, img: "burger", pair: "Rousse", long: "Le classique bien fait : cheddar fondant et bacon au choix — régulier ou érable-poivre pour la touche sucrée-salée." },
+      { n: "Suisse", d: "fromage suisse · champignons sautés", pd: "20 $", price: 20, vgroups: BURGER_VG, img: "burger", pair: "Irish Red Ale", long: "Fromage suisse et champignons sautés au beurre. Sobre et efficace." },
+      { n: "Parisien", d: "fromage bleu · bacon au choix", pd: "21 $", price: 21, vgroups: BURGER_VG, img: "burger", pair: "Scotch Ale", long: "Le caractère du fromage bleu adouci par le bacon. Pour les palais affirmés." },
+      { n: "Californien", d: "fromage de chèvre · tomates séchées", pd: "21 $", price: 21, vgroups: BURGER_VG, img: "burger", pair: "Saison d'épeautre", long: "Chèvre crémeux et tomates séchées — le plus soleil des dix-huit." },
+      { n: "Américain", d: "cheddar · avocat", pd: "20 $", price: 20, vgroups: BURGER_VG, img: "burger", pair: "Blonde", long: "Cheddar et avocat frais. Simple, riche, satisfaisant." },
+      { n: "Mexicain", d: "oka · jalapeños · salsa · guacamole", pd: "21 $", price: 21, vgroups: BURGER_VG, img: "burger", pair: "India Pale Ale", long: "Oka fondant, jalapeños, salsa et guacamole. Le Québec rencontre le Mexique." },
+      { n: "Aussie", d: "brie · champignons portobello", pd: "21 $", price: 21, vgroups: BURGER_VG, img: "burger", pair: "Down Under", long: "Brie coulant et portobello grillé. L'accord avec la double NEIPA australienne s'imposait." },
+      { n: "Texan", d: "monterey jack · oignons sautés · BBQ à la bière", pd: "20 $", price: 20, vgroups: BURGER_VG, img: "burger", pair: "Rousse", long: "Monterey jack, oignons sautés et sauce BBQ montée à la bière de la maison." },
+      { n: "Sud-Ouest", d: "havarti · guacamole · mayo chipotle · oignons frits", pd: "21 $", price: 21, vgroups: BURGER_VG, img: "burger", pair: "NEIPA Session", long: "Havarti doux, guacamole, mayo chipotle fumée et oignons frits croustillants." },
+      { n: "Big Broue", d: "cheddar · oignons à la bière · tartare · cornichons", pd: "21 $", price: 21, vgroups: BURGER_VG, img: "burger", pair: "Rousse à l'érable", long: "Le burger signature : oignons confits à la bière maison, cheddar, sauce tartare et cornichons." },
+      { n: "Québécois", d: "sauce à poutine · fromage en grains · bacon", pd: "21 $", price: 21, vgroups: BURGER_VG, img: "burger", pair: "Rousse à l'érable", long: "Un burger qui se prend pour une poutine : sauce brune, fromage en grains et bacon. Prévois des serviettes." },
+      { n: "Ruben", d: "suisse · viande fumée · choucroute · tartare", pd: "21 $", price: 21, vgroups: BURGER_VG, img: "burger", pair: "Irish Red Ale", long: "Inspiré du deli : viande fumée, choucroute, suisse et tartare sur boulette." },
+      { n: "Cochon", d: "provolone · porc effiloché · salade de chou · oignons frits", pd: "21 $", price: 21, vgroups: BURGER_VG, img: "burger", pair: "Rousse", long: "Boulette + porc effiloché + provolone + salade de chou crémeuse. Le bien-nommé." },
+      { n: "Thaï", d: "cheddar · bacon · sauce thaï", pd: "20 $", price: 20, vgroups: BURGER_VG, img: "burger", pair: "NEIPA Session", long: "Sauce thaï sucrée-piquante, bacon et cheddar. L'équilibre parfait entre feu et confort." },
+      { n: "Buffalo", d: "cheddar ou bleu · bacon · sauce buffalo", pd: "21 $", price: 21, vgroups: BURGER_VG, img: "burger", pair: "India Pale Ale", long: "Sauce buffalo, bacon, et le choix crucial : cheddar qui calme ou bleu qui en rajoute." },
+      { n: "Cow-boy", d: "cheddar · bacon érable · cornichons frits · sauce cow-boy", pd: "21 $", price: 21, vgroups: BURGER_VG, img: "burger", pair: "Rousse à l'érable", long: "Bacon à l'érable, cornichons frits et sauce cow-boy fumée. Yee-haw." },
+      { n: "New-York", d: "gouda · pommes · bacon poivré", pd: "21 $", price: 21, vgroups: BURGER_VG, img: "burger", pair: "Blanche aux bleuets", long: "Gouda, pommes tranchées et bacon poivré — sucré-salé assumé." },
+      { n: "Végétarien", d: "brie · légumes sautés · mayo pesto · bruschetta", pd: "21 $", price: 21, vgroups: BURGER_VG, img: "burger", pair: "Saison d'épeautre", long: "Galette végé garnie de brie, légumes sautés, mayo pesto, bruschetta et coulis balsamique." },
     ],
   },
   {
-    id: "sandwichs", name: "Sandwichs", sub: "baguette, multigrain ou wrap",
+    id: "sandwichs", name: "Sandwichs", sub: "pressés ou montés",
     art: "radial-gradient(circle at 70% 25%, #F3D486, transparent 55%), linear-gradient(160deg, #CE9A48, #7A4A1E)",
     items: [
-      ["Panini dinde", "brie · mayo aux canneberges", "19 $", "club", "Dinde, brie fondant et mayonnaise aux canneberges, pressé jusqu'à croustillant."],
-      ["Panini jambon", "suisse ou cheddar · dijon-miel", "18 $", "club", "Jambon, fromage au choix et moutarde dijon-miel dans un panini grillé."],
-      ["Panini tomates séchées", "chèvre · pesto · au poulet 22 $", "19 $", "club", "Tomates séchées, chèvre et pesto. Ajoute le poulet grillé pour la version repas."],
-      ["B.L.T. spécial", "bacon · laitue · tomates · fromage · avocat", "19 $", "club", "Le B.L.T. amélioré : fromage fondant et avocat en plus du trio classique."],
-      ["Club sandwich", "« le Dufour » à la viande fumée 24 $", "19 $", "club", "Trois étages de poulet, bacon, laitue et tomates. En version « Dufour », la viande fumée remplace le poulet."],
-      ["Poulet César", "poulet · laitue · bacon · césar · mozzarella", "19 $", "club", "Tout ce qu'on aime de la salade césar, roulé en sandwich avec du poulet grillé."],
-      ["Rôti de bœuf chaud", "oignons et champignons sautés · dip", "24 $", "steak", "Rôti de bœuf tranché servi chaud, oignons et champignons sautés, jus de viande pour tremper."],
-      ["Canard du Lac-Brome", "brie · pommes · bacon", "24 $", null, "Canard régional, brie, pommes et bacon — le sandwich le plus distingué du menu."],
-      ["Porc effiloché", "oignons frits · salade de chou", "24 $", null, "Porc effiloché fondant, oignons frits et salade de chou dans un pain qui essaie de tout retenir."],
-      ["Smoked meat 7 oz", "pain de seigle · moutarde · cornichons", "22 $", "smoked-meat", "Sept onces de viande fumée sur seigle, moutarde et cornichons. Comme sur le Boulevard, mais avec vue sur la montagne."],
-      ["Panini portobello végé", "", "19 $", null, "Portobello grillé et garnitures fraîches dans un panini pressé."],
-      ["Le garni", "poulet, bœuf, porc ou canard · légumes · fromage au choix", "24 $", null, "Ta protéine, champignons, oignons, poivrons et le fromage de ton choix : chèvre, brie, bleu, suisse ou havarti."],
+      { n: "Panini dinde", d: "brie · mayo aux canneberges", pd: "19 $", price: 19, vgroups: SAND_VG, img: "club", pair: "Blonde", long: "Dinde, brie fondant et mayonnaise aux canneberges, pressé jusqu'à croustillant." },
+      { n: "Panini jambon", d: "suisse ou cheddar · dijon-miel", pd: "18 $", price: 18, vgroups: SAND_VG, img: "club", pair: "Pilsner", long: "Jambon, fromage au choix et moutarde dijon-miel dans un panini grillé." },
+      { n: "Panini tomates séchées", d: "chèvre · pesto", pd: "19–22 $", price: 19, vgroups: [SAND_VG[0], { t: "Version", opts: [["Végé", 0], ["Avec poulet", 3]] }], img: "club", pair: "Saison d'épeautre", long: "Tomates séchées, chèvre et pesto. Ajoute le poulet grillé pour la version repas." },
+      { n: "B.L.T. spécial", d: "bacon · laitue · tomates · fromage · avocat", pd: "19 $", price: 19, vgroups: SAND_VG, img: "club", pair: "Blonde", long: "Le B.L.T. amélioré : fromage fondant et avocat en plus du trio classique." },
+      { n: "Club sandwich", d: "poulet · bacon · laitue · tomate", pd: "19–24 $", price: 19, vgroups: [{ t: "Version", opts: [["Classique au poulet", 0], ["« Le Dufour » — viande fumée", 5]] }], img: "club", pair: "Blonde", long: "Trois étages de poulet, bacon, laitue et tomates. En version « Dufour », la viande fumée remplace le poulet." },
+      { n: "Poulet César", d: "poulet · laitue · bacon · césar · mozzarella", pd: "19 $", price: 19, vgroups: SAND_VG, img: "club", pair: "Blonde", long: "Tout ce qu'on aime de la salade césar, roulé en sandwich avec du poulet grillé." },
+      { n: "Rôti de bœuf chaud", d: "oignons et champignons sautés · dip", pd: "24 $", price: 24, img: "steak", pair: "Irish Red Ale", long: "Rôti de bœuf tranché servi chaud, oignons et champignons sautés, jus de viande pour tremper." },
+      { n: "Canard du Lac-Brome", d: "brie · pommes · bacon", pd: "24 $", price: 24, pair: "Scotch Ale", long: "Canard régional, brie, pommes et bacon — le sandwich le plus distingué du menu." },
+      { n: "Porc effiloché", d: "oignons frits · salade de chou", pd: "24 $", price: 24, pair: "Rousse", long: "Porc effiloché fondant, oignons frits et salade de chou dans un pain qui essaie de tout retenir." },
+      { n: "Smoked meat 7 oz", d: "pain de seigle · moutarde · cornichons", pd: "22 $", price: 22, img: "smoked-meat", pair: "Irish Red Ale", long: "Sept onces de viande fumée sur seigle, moutarde et cornichons. Comme sur le Boulevard, mais avec vue sur la montagne." },
+      { n: "Panini portobello végé", d: "", pd: "19 $", price: 19, vgroups: SAND_VG, pair: "Saison d'épeautre", long: "Portobello grillé et garnitures fraîches dans un panini pressé." },
+      { n: "Le garni", d: "champignons · oignons · poivrons · fromage au choix", pd: "24 $", price: 24, vgroups: [{ t: "Viande", opts: [["Poulet", 0], ["Bœuf", 0], ["Porc", 0], ["Canard", 0]] }, { t: "Fromage", opts: [["Chèvre", 0], ["Brie", 0], ["Bleu", 0], ["Suisse", 0], ["Havarti", 0]] }], pair: "Rousse", long: "Ta protéine, légumes sautés et le fromage de ton choix. Le sandwich sur mesure de la maison." },
     ],
   },
   {
     id: "poisson", name: "Poisson", sub: "de la mer",
     art: "radial-gradient(circle at 35% 65%, #9FC4CB, transparent 55%), linear-gradient(150deg, #6FA3AD, #2E5B66)",
     items: [
-      ["Fish & chips", "pâte à la bière maison", "22 $", "fish-chips", "Filet dans une pâte à la bière de la maison — évidemment — frit jusqu'à doré, avec frites et sauce tartare."],
-      ["Burger de saumon grillé", "", "19 $", "saumon", "Pavé de saumon grillé en burger, plus léger mais pas moins satisfaisant."],
-      ["Saumon sur planche de cèdre", "", "28 $", "saumon", "Saumon cuit sur planche de cèdre pour un fumé subtil. Le plat qui surprend dans un pub."],
+      { n: "Fish & chips", d: "pâte à la bière maison", pd: "22 $", price: 22, img: "fish-chips", pair: "Pilsner", long: "Filet dans une pâte à la bière de la maison — évidemment — frit jusqu'à doré, avec frites et sauce tartare." },
+      { n: "Burger de saumon grillé", d: "", pd: "19 $", price: 19, vgroups: [BURGER_VG[1]], img: "saumon", pair: "Blanche aux bleuets", long: "Pavé de saumon grillé en burger, plus léger mais pas moins satisfaisant." },
+      { n: "Saumon sur planche de cèdre", d: "", pd: "28 $", price: 28, img: "saumon", pair: "Saison d'épeautre", long: "Saumon cuit sur planche de cèdre pour un fumé subtil. Le plat qui surprend dans un pub." },
     ],
   },
   {
     id: "grillades", name: "Grillades", sub: "sur le gril",
     art: "radial-gradient(circle at 60% 70%, #D96A45, transparent 50%), linear-gradient(200deg, #A33B24, #3E1710)",
-    note: "Servies avec salade ou frites-mayo et champignons sautés. À côté : rondelles +3 $ · patates sucrées +4 $ · grecque +4 $ · poutine +5 $",
+    note: "Servies avec salade ou frites-mayo et champignons sautés.",
     items: [
-      ["Bavette", "", "30 $", "steak", "Bavette grillée à la cuisson demandée, champignons sautés. Tendre et goûteuse — la coupe des habitués."],
-      ["Filet mignon 8 oz", "", "35 $", "steak", "Huit onces de filet mignon, la coupe la plus tendre, grillée simplement."],
-      ["Côtes levées", "", "30 $", "cotes-levees", "Côtes levées laquées de sauce BBQ, cuites jusqu'à ce que la viande se détache de l'os."],
+      { n: "Bavette", d: "", pd: "30 $", price: 30, extras: SIDES, img: "steak", pair: "Scotch Ale", long: "Bavette grillée à la cuisson demandée, champignons sautés. Tendre et goûteuse — la coupe des habitués." },
+      { n: "Filet mignon 8 oz", d: "", pd: "35 $", price: 35, extras: SIDES, img: "steak", pair: "Scotch Ale", long: "Huit onces de filet mignon, la coupe la plus tendre, grillée simplement." },
+      { n: "Côtes levées", d: "sauce BBQ", pd: "30 $", price: 30, extras: SIDES, img: "cotes-levees", pair: "Rousse à l'érable", long: "Côtes levées laquées de sauce BBQ, cuites jusqu'à ce que la viande se détache de l'os." },
     ],
   },
   {
     id: "enfants", name: "Pour les petits", sub: "dessert et jus inclus",
     art: "radial-gradient(circle at 30% 30%, #F5D06E, transparent 55%), linear-gradient(180deg, #E8B44C, #B3752A)",
     items: [
-      ["Doigts de poulet", "", "12 $", "enfants", "Doigts de poulet croustillants avec frites. Dessert et jus inclus."],
-      ["Mini pogos", "", "12 $", "enfants", "Des pogos format mini, l'incontournable. Dessert et jus inclus."],
-      ["Mini poutine", "", "12 $", "poutine", "Une vraie poutine, en petit. Dessert et jus inclus."],
-      ["Macaroni au fromage", "", "12 $", null, "Macaroni au fromage crémeux. Dessert et jus inclus."],
+      { n: "Repas enfant", d: "un choix · dessert et jus inclus", pd: "12 $", price: 12, vgroups: [{ t: "Choix", opts: [["Doigts de poulet", 0], ["Mini pogos", 0], ["Mini poutine", 0], ["Macaroni au fromage", 0]] }], img: "enfants", long: "Un choix parmi quatre valeurs sûres, avec dessert et jus inclus. Zéro négociation requise." },
     ],
   },
   {
     id: "breuvages", name: "Breuvages", sub: "sans houblon",
     art: "radial-gradient(circle at 65% 35%, #EFE3C8, transparent 55%), linear-gradient(170deg, #C9B98F, #6E5B44)",
-    note: "Mayos : régulière · ail · cari · épicée · raifort — Sauces : bleu · épicée · thaï · miel · ranch · crème sure · BBQ · aigre-douce. Taxes en sus.",
+    note: "Les taxes ne sont pas incluses.",
     items: [
-      ["Liqueur en canette", "Pepsi · 7up · limonade · ginger ale · thé glacé", "4 $", null, "Pepsi, Pepsi diète, 7up, limonade, ginger ale ou thé glacé, en canette."],
-      ["Jus de fruits", "pomme · orange · ananas · raisin", "3 $", null, "Jus de pomme, d'orange, d'ananas ou de raisin."],
-      ["Perrier", "", "5 $", null, "De l'eau qui pétille, pour faire changement de la bière."],
-      ["Lait", "au chocolat 4 $", "3 $", null, "Un verre de lait — ou de lait au chocolat pour une piasse de plus."],
-      ["Chocolat chaud", "", "5 $", null, "Chocolat chaud réconfortant, parfait après les pistes."],
-      ["Café, thé, tisane", "", "3 $", "cafe", "Café filtre, thé ou tisane pour finir le repas."],
+      { n: "Liqueur en canette", d: "", pd: "4 $", price: 4, vgroups: [{ t: "Choix", opts: [["Pepsi", 0], ["Pepsi diète", 0], ["7up", 0], ["Limonade", 0], ["Ginger ale", 0], ["Thé glacé", 0]] }], long: "Le pétillant classique, en canette bien froide." },
+      { n: "Jus de fruits", d: "", pd: "3 $", price: 3, vgroups: [{ t: "Choix", opts: [["Pomme", 0], ["Orange", 0], ["Ananas", 0], ["Raisin", 0]] }], long: "Jus de pomme, d'orange, d'ananas ou de raisin." },
+      { n: "Perrier", d: "", pd: "5 $", price: 5, long: "De l'eau qui pétille, pour faire changement de la bière." },
+      { n: "Lait", d: "", pd: "3–4 $", price: 3, vgroups: [{ t: "Version", opts: [["Nature", 0], ["Au chocolat", 1]] }], long: "Un verre de lait — ou de lait au chocolat pour une piasse de plus." },
+      { n: "Chocolat chaud", d: "", pd: "5 $", price: 5, long: "Chocolat chaud réconfortant, parfait après les pistes." },
+      { n: "Café, thé, tisane", d: "", pd: "3 $", price: 3, img: "cafe", long: "Café filtre, thé ou tisane pour finir le repas." },
     ],
   },
 ];
@@ -212,6 +209,20 @@ function el(tag, cls, html) {
   return node;
 }
 
+function fmt(n) { return `${n} $`; }
+
+function itemQ(it) {
+  return `${it.n} ${it.d || ""}`.toLowerCase();
+}
+
+function findBeer(name) {
+  for (const f of BEERS) {
+    const item = f.items.find((b) => b[0] === name);
+    if (item) return { type: "beer", ctx: f, item };
+  }
+  return null;
+}
+
 function renderStories() {
   const wrap = $("#stories");
   const tilts = [-4, 3, -2, 4, -3, 2, -4, 3, -2, 4, -3, 2];
@@ -243,20 +254,20 @@ function renderFood() {
     const g = el("section", "group");
     g.id = "g-" + s.id;
     g.appendChild(el("h2", null, s.name));
+    if (s.note) g.appendChild(el("p", "g-note", s.note));
     const card = el("div", "card");
     s.items.forEach((item) => {
-      const [name, desc, price] = item;
       const row = el("button", "mrow");
       row.type = "button";
-      row.dataset.q = (name + " " + desc).toLowerCase();
+      row.dataset.q = itemQ(item);
+      const cfg = (item.sizes || item.vgroups || item.extras) ? `<span class="cfg-hint">personnalisable</span>` : "";
       row.innerHTML =
-        `<div class="m-main"><div class="m-name">${name}</div>${desc ? `<div class="m-desc">${desc}</div>` : ""}</div>` +
-        `<div class="m-price">${price}</div>`;
+        `<div class="m-main"><div class="m-name">${item.n}</div>${item.d ? `<div class="m-desc">${item.d}</div>` : ""}</div>` +
+        `<div class="m-right"><div class="m-price">${item.pd}</div>${cfg}</div>`;
       row.addEventListener("click", () => openFoodSheet(s, item, row));
       card.appendChild(row);
     });
     g.appendChild(card);
-    if (s.note) g.appendChild(el("p", "foot-note", s.note));
     wrap.appendChild(g);
   });
 }
@@ -284,17 +295,38 @@ function renderBeers() {
   });
 }
 
-/* ————— Item modal (centered, swipeable) ————— */
+/* ————— Item modal (centered, swipeable, configurable) ————— */
 let lastFocus = null;
 let closeTimer = null;
 let lockedScrollY = 0;
 let sheetList = [];
 let sheetIndex = 0;
 let navigating = false;
+let cfg = { size: 0, v: [], extras: new Set() };
+let pairReturn = null;
 
 const FOOD_FLAT = FOOD.flatMap((s) => s.items.map((item) => ({ type: "food", ctx: s, item })));
 const BEER_FLAT = BEERS.flatMap((f) => f.items.map((item) => ({ type: "beer", ctx: f, item })));
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+function computeTotal(it) {
+  let total = it.sizes ? it.sizes[cfg.size][1] : (it.price || 0);
+  (it.vgroups || []).forEach((g, gi) => { total += g.opts[cfg.v[gi] || 0][1]; });
+  (it.extras || []).forEach((ex, xi) => { if (cfg.extras.has(xi)) total += ex[1]; });
+  return total;
+}
+
+function pairingHTML(it) {
+  if (!it.pair) return "";
+  const b = findBeer(it.pair);
+  if (!b) return "";
+  const [name, style, abv, color] = b.item;
+  return `<div class="pairing"><h3>Accord bière</h3>` +
+    `<button type="button" class="pair-card" data-pair="${name}">` +
+    `<span class="keg" style="--beer:${color}"></span>` +
+    `<span class="pair-main"><span class="b-name">${name}</span><span class="b-style">${style} · ${abv}</span></span>` +
+    `<span class="pair-go">Voir ›</span></button></div>`;
+}
 
 function sheetHTML(entry) {
   if (entry.type === "beer") {
@@ -302,30 +334,62 @@ function sheetHTML(entry) {
     const bars = PALETTE_AXES.map(([k, label]) =>
       `<div class="pal-row"><span class="pal-label">${label}</span><span class="pal-track"><span class="pal-fill" style="width:${(pal[k] / 5) * 100}%"></span></span><span class="pal-val">${pal[k]}/5</span></div>`
     ).join("");
-    return `<div class="sheet-glass-wrap"><div class="glass" style="--beer:${color}"><span class="glass-foam"></span></div></div>` +
+    const back = pairReturn
+      ? `<button type="button" class="pair-back" data-return="1">‹ Retour au plat</button>`
+      : "";
+    return back +
+      `<div class="sheet-glass-wrap"><div class="glass" style="--beer:${color}"><span class="glass-foam"></span></div></div>` +
       `<div class="sheet-head"><h2 id="sheet-title">${name}</h2><span class="abv abv-big">${abv}</span></div>` +
       `<p class="sheet-kicker">${style} · ${entry.ctx.family}</p>` +
       `<div class="palette"><h3>Palette de goût</h3>${bars}</div>` +
       `<p class="sheet-desc">${long}</p>`;
   }
-  const [name, desc, price, img, long] = entry.item;
-  const photo = img
-    ? `<div class="sheet-photo"><img src="img/${img}.jpg" alt="" loading="lazy"></div>`
+  const it = entry.item;
+  const photo = it.img
+    ? `<div class="sheet-photo"><img src="img/${it.img}.jpg" alt="" loading="lazy"></div>`
     : `<div class="sheet-photo art-only" style="background:${entry.ctx.art}"></div>`;
-  return photo +
-    `<div class="sheet-head"><h2 id="sheet-title">${name}</h2><span class="sheet-price">${price}</span></div>` +
+  let html = photo +
+    `<div class="sheet-head"><h2 id="sheet-title">${it.n}</h2><span class="sheet-price" id="sheet-total" aria-live="polite">${fmt(computeTotal(it))}</span></div>` +
     `<p class="sheet-kicker">${entry.ctx.name} · ${entry.ctx.sub}</p>` +
-    (desc ? `<p class="sheet-sub">${desc}</p>` : "") +
-    `<p class="sheet-desc">${long}</p>` +
-    (img ? creditLine(img) : "");
+    (it.d ? `<p class="sheet-sub">${it.d}</p>` : "") +
+    `<p class="sheet-desc">${it.long}</p>`;
+  let gid = 0;
+  if (it.sizes) {
+    const hid = `cfg-h-${gid++}`;
+    html += `<div class="cfg" role="group" aria-labelledby="${hid}"><h3 id="${hid}">Format</h3><div class="seg">` +
+      it.sizes.map(([label, p], i) =>
+        `<button type="button" class="seg-b${i === cfg.size ? " on" : ""}" data-size="${i}" aria-pressed="${i === cfg.size}">${label}<small>${fmt(p)}</small></button>`).join("") +
+      `</div></div>`;
+  }
+  (it.vgroups || []).forEach((g, gi) => {
+    const hid = `cfg-h-${gid++}`;
+    html += `<div class="cfg" role="group" aria-labelledby="${hid}"><h3 id="${hid}">${g.t}</h3><div class="opts">` +
+      g.opts.map(([label, delta], oi) =>
+        `<button type="button" class="opt${(cfg.v[gi] || 0) === oi ? " on" : ""}" data-vg="${gi}" data-oi="${oi}" aria-pressed="${(cfg.v[gi] || 0) === oi}"><span>${label}</span><span class="opt-p">${delta ? "+" + fmt(delta) : ""}</span></button>`).join("") +
+      `</div></div>`;
+  });
+  if (it.extras) {
+    const hid = `cfg-h-${gid++}`;
+    html += `<div class="cfg" role="group" aria-labelledby="${hid}"><h3 id="${hid}">Extras suggérés</h3><div class="opts">` +
+      it.extras.map(([label, p], xi) =>
+        `<button type="button" class="opt x${cfg.extras.has(xi) ? " on" : ""}" data-extra="${xi}" aria-pressed="${cfg.extras.has(xi)}"><span>${label}</span><span class="opt-p">+${fmt(p)}</span></button>`).join("") +
+      `</div></div>`;
+  }
+  html += pairingHTML(it);
+  if (it.img) html += creditLine(it.img);
+  return html;
 }
 
 let counterTimer = null;
 
-function renderSheet() {
+function renderSheet(resetCfg = true) {
+  const entry = sheetList[sheetIndex];
+  if (resetCfg && entry.type === "food") {
+    cfg = { size: 0, v: (entry.item.vgroups || []).map(() => 0), extras: new Set() };
+  }
   const body = $("#sheet-body");
   const hadFocusInside = body.contains(document.activeElement);
-  body.innerHTML = sheetHTML(sheetList[sheetIndex]);
+  body.innerHTML = sheetHTML(entry);
   if (hadFocusInside) $("#sheet-close").focus({ preventScroll: true });
   if (counterTimer) clearTimeout(counterTimer);
   counterTimer = window.setTimeout(() => {
@@ -334,12 +398,31 @@ function renderSheet() {
   }, 280);
   $("#snav-prev").disabled = sheetIndex === 0;
   $("#snav-next").disabled = sheetIndex === sheetList.length - 1;
-  $("#sheet-scroll").scrollTop = 0;
+  if (resetCfg) $("#sheet-scroll").scrollTop = 0;
+}
+
+function creditLine(imgKey) {
+  const c = CREDITS[imgKey];
+  if (!c) return "";
+  return `<p class="sheet-credit">Photo d'illustration — <a href="${c.url}" target="_blank" rel="noopener">${c.artist}</a> (${c.license}), Wikimedia Commons</p>`;
+}
+
+function openFoodSheet(section, item, trigger) {
+  sheetList = FOOD_FLAT;
+  sheetIndex = FOOD_FLAT.findIndex((e) => e.item === item);
+  openSheet(trigger);
+}
+
+function openBeerSheet(family, item, trigger) {
+  sheetList = BEER_FLAT;
+  sheetIndex = BEER_FLAT.findIndex((e) => e.item === item);
+  openSheet(trigger);
 }
 
 function openSheet(trigger) {
   if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
   cancelNavTimers();
+  pairReturn = null;
   lastFocus = trigger || document.activeElement;
   renderSheet();
   if (!document.body.classList.contains("sheet-open")) {
@@ -360,9 +443,9 @@ function openSheet(trigger) {
   $("#sheet-close").focus({ preventScroll: true });
 }
 
-function setBodyFx(el, x, rot, op) {
-  el.style.transform = x === 0 && rot === 0 ? "" : `translateX(${x}px) rotate(${rot}deg)`;
-  el.style.opacity = op === 1 ? "" : String(op);
+function setBodyFx(el2, x, rot, op) {
+  el2.style.transform = x === 0 && rot === 0 ? "" : `translateX(${x}px) rotate(${rot}deg)`;
+  el2.style.opacity = op === 1 ? "" : String(op);
 }
 
 let navTimer1 = null;
@@ -407,6 +490,60 @@ function navigate(dir) {
   }, 190);
 }
 
+/* Config interactions (event delegation — DOM is re-rendered per item) */
+$("#sheet-body").addEventListener("click", (e) => {
+  const entry = sheetList[sheetIndex];
+  const backBtn = e.target.closest("[data-return]");
+  if (backBtn && pairReturn) {
+    cancelNavTimers();
+    sheetList = pairReturn.list;
+    sheetIndex = pairReturn.index;
+    pairReturn = null;
+    renderSheet(false);
+    $("#sheet-close").focus({ preventScroll: true });
+    return;
+  }
+  const pairBtn = e.target.closest("[data-pair]");
+  if (pairBtn) {
+    const b = findBeer(pairBtn.dataset.pair);
+    if (b) {
+      cancelNavTimers();
+      pairReturn = { list: sheetList, index: sheetIndex };
+      sheetList = BEER_FLAT;
+      sheetIndex = BEER_FLAT.findIndex((x) => x.item === b.item);
+      renderSheet();
+      $("#sheet-close").focus({ preventScroll: true });
+    }
+    return;
+  }
+  if (!entry || entry.type !== "food") return;
+  const it = entry.item;
+  const seg = e.target.closest("[data-size]");
+  const opt = e.target.closest("[data-vg]");
+  const ext = e.target.closest("[data-extra]");
+  let refocusSel = null;
+  if (seg) {
+    cfg.size = Number(seg.dataset.size);
+    refocusSel = `[data-size="${seg.dataset.size}"]`;
+  } else if (opt) {
+    cfg.v[Number(opt.dataset.vg)] = Number(opt.dataset.oi);
+    refocusSel = `[data-vg="${opt.dataset.vg}"][data-oi="${opt.dataset.oi}"]`;
+  } else if (ext) {
+    const xi = Number(ext.dataset.extra);
+    if (cfg.extras.has(xi)) cfg.extras.delete(xi); else cfg.extras.add(xi);
+    refocusSel = `[data-extra="${xi}"]`;
+  } else return;
+  const body = $("#sheet-body");
+  const hadFocusInside = body.contains(document.activeElement);
+  const keepScroll = $("#sheet-scroll").scrollTop;
+  renderSheet(false);
+  $("#sheet-scroll").scrollTop = keepScroll;
+  if (hadFocusInside && refocusSel) {
+    const again = body.querySelector(refocusSel);
+    if (again) again.focus({ preventScroll: true });
+  }
+});
+
 /* Swipe: horizontal drag on the card follows the finger, then commits or springs back */
 (() => {
   const sheet = $("#sheet");
@@ -415,6 +552,7 @@ function navigate(dir) {
 
   sheet.addEventListener("touchstart", (e) => {
     if (e.touches.length !== 1 || navigating) return;
+    if (e.target.closest(".seg, .opts, .pair-card, .pair-back")) return;
     active = true; axis = null; dx = 0;
     startX = e.touches[0].clientX;
     startY = e.touches[0].clientY;
@@ -486,24 +624,6 @@ function closeSheet() {
   }
 }
 
-function creditLine(imgKey) {
-  const c = CREDITS[imgKey];
-  if (!c) return "";
-  return `<p class="sheet-credit">Photo d'illustration — <a href="${c.url}" target="_blank" rel="noopener">${c.artist}</a> (${c.license}), Wikimedia Commons</p>`;
-}
-
-function openFoodSheet(section, item, trigger) {
-  sheetList = FOOD_FLAT;
-  sheetIndex = FOOD_FLAT.findIndex((e) => e.item === item);
-  openSheet(trigger);
-}
-
-function openBeerSheet(family, item, trigger) {
-  sheetList = BEER_FLAT;
-  sheetIndex = BEER_FLAT.findIndex((e) => e.item === item);
-  openSheet(trigger);
-}
-
 function switchTab(id) {
   document.querySelectorAll(".view").forEach((v) => v.classList.add("hidden"));
   $("#view-" + id).classList.remove("hidden");
@@ -552,7 +672,8 @@ $("#snav-prev").addEventListener("click", () => navigate(-1));
 $("#snav-next").addEventListener("click", () => navigate(1));
 document.addEventListener("keydown", (e) => {
   if ($("#sheet").hidden) return;
-  if (e.key === "Escape") closeSheet();
-  else if (e.key === "ArrowLeft") navigate(-1);
+  if (e.key === "Escape") { closeSheet(); return; }
+  if (document.activeElement && document.activeElement.closest(".cfg")) return;
+  if (e.key === "ArrowLeft") navigate(-1);
   else if (e.key === "ArrowRight") navigate(1);
 });
