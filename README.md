@@ -15,10 +15,13 @@ Données réelles : menu complet du restaurant + les ~20 bières maison (styles 
 Statique — HTML / CSS / JS vanille, aucune dépendance, aucune build step.
 
 ```
-index.html      structure + tab bar + vues
-css/app.css     design tokens + composants
-js/app.js       données du menu + rendu + recherche + onglets
+index.html      structure + tab bar + vues + coquille du bottom sheet
+css/app.css     design tokens + composants + bottom sheet
+js/app.js       données du menu + rendu + recherche + onglets + modales
 fonts/          Baloo 2 (OFL), auto-hébergée
+img/            photos d'illustration (Wikimedia Commons, CC) + credits.json
 ```
+
+Chaque item ouvre un bottom sheet : photo, description complète, et pour les bières une palette de goût (amertume / sucré / corps / fruité) avec un verre rendu en CSS dans la couleur du style. Les photos sont des illustrations libres (CC) de Wikimedia Commons — l'attribution s'affiche dans chaque modale via `img/credits.json`.
 
 Servir localement : `python3 -m http.server 4599`
