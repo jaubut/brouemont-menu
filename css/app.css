@@ -327,9 +327,10 @@ body.sheet-open { overflow: hidden; }
   -webkit-backdrop-filter: blur(3px);
   backdrop-filter: blur(3px);
   opacity: 0;
+  pointer-events: none;
   transition: opacity 0.24s ease;
 }
-.sheet-backdrop.show { opacity: 1; }
+.sheet-backdrop.show { opacity: 1; pointer-events: auto; }
 .sheet {
   position: fixed; top: 50%; left: 50%;
   transform: translate(-50%, -46%) scale(0.94);
@@ -344,8 +345,9 @@ body.sheet-open { overflow: hidden; }
   transition: transform 0.26s cubic-bezier(0.32, 0.72, 0.22, 1), opacity 0.22s ease;
   padding: 10px 22px 12px;
   touch-action: pan-y;
+  pointer-events: none;
 }
-.sheet.show { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+.sheet.show { transform: translate(-50%, -50%) scale(1); opacity: 1; pointer-events: auto; }
 .sheet-scroll {
   overflow-y: auto;
   overflow-x: hidden;

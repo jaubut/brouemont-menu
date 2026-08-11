@@ -252,7 +252,7 @@ function renderFood() {
       row.innerHTML =
         `<div class="m-main"><div class="m-name">${name}</div>${desc ? `<div class="m-desc">${desc}</div>` : ""}</div>` +
         `<div class="m-price">${price}</div>`;
-      row.addEventListener("click", () => openFoodSheet(s, item));
+      row.addEventListener("click", () => openFoodSheet(s, item, row));
       card.appendChild(row);
     });
     g.appendChild(card);
@@ -276,7 +276,7 @@ function renderBeers() {
         `<span class="keg" style="--beer:${color}"></span>` +
         `<div class="m-main"><div class="b-name">${name}</div><div class="b-style">${style}</div></div>` +
         `<span class="abv">${abv}</span>`;
-      row.addEventListener("click", () => openBeerSheet(f, item));
+      row.addEventListener("click", () => openBeerSheet(f, item, row));
       card.appendChild(row);
     });
     g.appendChild(card);
@@ -337,10 +337,10 @@ function renderSheet() {
   $("#sheet-scroll").scrollTop = 0;
 }
 
-function openSheet() {
+function openSheet(trigger) {
   if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
   cancelNavTimers();
-  lastFocus = document.activeElement;
+  lastFocus = trigger || document.activeElement;
   renderSheet();
   if (!document.body.classList.contains("sheet-open")) {
     lockedScrollY = window.scrollY;
@@ -460,6 +460,7 @@ function navigate(dir) {
 
 function closeSheet() {
   const sheet = $("#sheet");
+  if (sheet.hidden || !sheet.classList.contains("show")) return;
   const body = $("#sheet-body");
   cancelNavTimers();
   body.classList.remove("drag", "settle");
@@ -477,10 +478,11 @@ function closeSheet() {
     sheet.hidden = true;
     closeTimer = null;
   }, 240);
-  if (lastFocus && lastFocus.isConnected && lastFocus.offsetParent !== null) {
+  if (lastFocus && lastFocus !== document.body && lastFocus.isConnected && lastFocus.offsetParent !== null) {
     lastFocus.focus({ preventScroll: true });
-  } else {
-    $("#search-input").focus({ preventScroll: true });
+  } else if (lastFocus && lastFocus !== document.body) {
+    const tab = document.querySelector('.tab[aria-selected="true"]');
+    if (tab) tab.focus({ preventScroll: true });
   }
 }
 
@@ -490,16 +492,16 @@ function creditLine(imgKey) {
   return `<p class="sheet-credit">Photo d'illustration — <a href="${c.url}" target="_blank" rel="noopener">${c.artist}</a> (${c.license}), Wikimedia Commons</p>`;
 }
 
-function openFoodSheet(section, item) {
+function openFoodSheet(section, item, trigger) {
   sheetList = FOOD_FLAT;
   sheetIndex = FOOD_FLAT.findIndex((e) => e.item === item);
-  openSheet();
+  openSheet(trigger);
 }
 
-function openBeerSheet(family, item) {
+function openBeerSheet(family, item, trigger) {
   sheetList = BEER_FLAT;
   sheetIndex = BEER_FLAT.findIndex((e) => e.item === item);
-  openSheet();
+  openSheet(trigger);
 }
 
 function switchTab(id) {
