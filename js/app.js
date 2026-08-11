@@ -284,15 +284,64 @@ function renderBeers() {
   });
 }
 
-/* ————— Bottom sheet ————— */
+/* ————— Item modal (centered, swipeable) ————— */
 let lastFocus = null;
 let closeTimer = null;
 let lockedScrollY = 0;
+let sheetList = [];
+let sheetIndex = 0;
+let navigating = false;
 
-function openSheet(html) {
+const FOOD_FLAT = FOOD.flatMap((s) => s.items.map((item) => ({ type: "food", ctx: s, item })));
+const BEER_FLAT = BEERS.flatMap((f) => f.items.map((item) => ({ type: "beer", ctx: f, item })));
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+function sheetHTML(entry) {
+  if (entry.type === "beer") {
+    const [name, style, abv, color, pal, long] = entry.item;
+    const bars = PALETTE_AXES.map(([k, label]) =>
+      `<div class="pal-row"><span class="pal-label">${label}</span><span class="pal-track"><span class="pal-fill" style="width:${(pal[k] / 5) * 100}%"></span></span><span class="pal-val">${pal[k]}/5</span></div>`
+    ).join("");
+    return `<div class="sheet-glass-wrap"><div class="glass" style="--beer:${color}"><span class="glass-foam"></span></div></div>` +
+      `<div class="sheet-head"><h2 id="sheet-title">${name}</h2><span class="abv abv-big">${abv}</span></div>` +
+      `<p class="sheet-kicker">${style} · ${entry.ctx.family}</p>` +
+      `<div class="palette"><h3>Palette de goût</h3>${bars}</div>` +
+      `<p class="sheet-desc">${long}</p>`;
+  }
+  const [name, desc, price, img, long] = entry.item;
+  const photo = img
+    ? `<div class="sheet-photo"><img src="img/${img}.jpg" alt="" loading="lazy"></div>`
+    : `<div class="sheet-photo art-only" style="background:${entry.ctx.art}"></div>`;
+  return photo +
+    `<div class="sheet-head"><h2 id="sheet-title">${name}</h2><span class="sheet-price">${price}</span></div>` +
+    `<p class="sheet-kicker">${entry.ctx.name} · ${entry.ctx.sub}</p>` +
+    (desc ? `<p class="sheet-sub">${desc}</p>` : "") +
+    `<p class="sheet-desc">${long}</p>` +
+    (img ? creditLine(img) : "");
+}
+
+let counterTimer = null;
+
+function renderSheet() {
+  const body = $("#sheet-body");
+  const hadFocusInside = body.contains(document.activeElement);
+  body.innerHTML = sheetHTML(sheetList[sheetIndex]);
+  if (hadFocusInside) $("#sheet-close").focus({ preventScroll: true });
+  if (counterTimer) clearTimeout(counterTimer);
+  counterTimer = window.setTimeout(() => {
+    $("#s-counter").textContent = `${sheetIndex + 1} / ${sheetList.length}`;
+    counterTimer = null;
+  }, 280);
+  $("#snav-prev").disabled = sheetIndex === 0;
+  $("#snav-next").disabled = sheetIndex === sheetList.length - 1;
+  $("#sheet-scroll").scrollTop = 0;
+}
+
+function openSheet() {
   if (closeTimer) { clearTimeout(closeTimer); closeTimer = null; }
+  cancelNavTimers();
   lastFocus = document.activeElement;
-  $("#sheet-body").innerHTML = html;
+  renderSheet();
   if (!document.body.classList.contains("sheet-open")) {
     lockedScrollY = window.scrollY;
     document.body.classList.add("sheet-open");
@@ -308,12 +357,113 @@ function openSheet(html) {
     $("#sheet-backdrop").classList.add("show");
     sheet.classList.add("show");
   });
-  sheet.scrollTop = 0;
   $("#sheet-close").focus({ preventScroll: true });
 }
 
+function setBodyFx(el, x, rot, op) {
+  el.style.transform = x === 0 && rot === 0 ? "" : `translateX(${x}px) rotate(${rot}deg)`;
+  el.style.opacity = op === 1 ? "" : String(op);
+}
+
+let navTimer1 = null;
+let navTimer2 = null;
+
+function cancelNavTimers() {
+  if (navTimer1) { clearTimeout(navTimer1); navTimer1 = null; }
+  if (navTimer2) { clearTimeout(navTimer2); navTimer2 = null; }
+  navigating = false;
+}
+
+function navigate(dir) {
+  const ni = sheetIndex + dir;
+  if (ni < 0 || ni >= sheetList.length || navigating) return;
+  const body = $("#sheet-body");
+  if (reducedMotion.matches) {
+    sheetIndex = ni;
+    renderSheet();
+    setBodyFx(body, 0, 0, 1);
+    return;
+  }
+  navigating = true;
+  body.classList.remove("drag");
+  body.classList.add("settle");
+  setBodyFx(body, -dir * 64, -dir * 1.5, 0);
+  navTimer1 = window.setTimeout(() => {
+    navTimer1 = null;
+    sheetIndex = ni;
+    renderSheet();
+    body.classList.remove("settle");
+    body.classList.add("drag");
+    setBodyFx(body, dir * 64, dir * 1.5, 0);
+    void body.offsetWidth;
+    body.classList.remove("drag");
+    body.classList.add("settle");
+    setBodyFx(body, 0, 0, 1);
+    navTimer2 = window.setTimeout(() => {
+      navTimer2 = null;
+      body.classList.remove("settle");
+      navigating = false;
+    }, 250);
+  }, 190);
+}
+
+/* Swipe: horizontal drag on the card follows the finger, then commits or springs back */
+(() => {
+  const sheet = $("#sheet");
+  const body = $("#sheet-body");
+  let startX = 0, startY = 0, dx = 0, axis = null, active = false;
+
+  sheet.addEventListener("touchstart", (e) => {
+    if (e.touches.length !== 1 || navigating) return;
+    active = true; axis = null; dx = 0;
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  }, { passive: true });
+
+  sheet.addEventListener("touchmove", (e) => {
+    if (!active) return;
+    const mx = e.touches[0].clientX - startX;
+    const my = e.touches[0].clientY - startY;
+    if (!axis && (Math.abs(mx) > 8 || Math.abs(my) > 8)) {
+      axis = Math.abs(mx) > Math.abs(my) ? "h" : "v";
+    }
+    if (axis !== "h") return;
+    e.preventDefault();
+    dx = mx;
+    if (reducedMotion.matches) return;
+    let vx = dx;
+    const atEdge = (sheetIndex === 0 && vx > 0) || (sheetIndex === sheetList.length - 1 && vx < 0);
+    if (atEdge) vx *= 0.3;
+    body.classList.remove("settle");
+    body.classList.add("drag");
+    setBodyFx(body, vx, vx * 0.02, Math.max(0.35, 1 - Math.abs(vx) / 500));
+  }, { passive: false });
+
+  sheet.addEventListener("touchend", () => {
+    if (!active) return;
+    active = false;
+    if (axis !== "h") return;
+    const commit = Math.abs(dx) > 70;
+    const dir = dx < 0 ? 1 : -1;
+    const target = sheetIndex + dir;
+    if (commit && target >= 0 && target < sheetList.length) {
+      navigate(dir);
+    } else if (!reducedMotion.matches) {
+      body.classList.remove("drag");
+      body.classList.add("settle");
+      setBodyFx(body, 0, 0, 1);
+      window.setTimeout(() => body.classList.remove("settle"), 250);
+    }
+    dx = 0;
+  });
+})();
+
 function closeSheet() {
   const sheet = $("#sheet");
+  const body = $("#sheet-body");
+  cancelNavTimers();
+  body.classList.remove("drag", "settle");
+  setBodyFx(body, 0, 0, 1);
   $("#sheet-backdrop").classList.remove("show");
   sheet.classList.remove("show");
   $(".app").inert = false;
@@ -341,32 +491,15 @@ function creditLine(imgKey) {
 }
 
 function openFoodSheet(section, item) {
-  const [name, desc, price, img, long] = item;
-  const photo = img
-    ? `<div class="sheet-photo"><img src="img/${img}.jpg" alt="" loading="lazy"></div>`
-    : `<div class="sheet-photo art-only" style="background:${section.art}"></div>`;
-  openSheet(
-    photo +
-    `<div class="sheet-head"><h2 id="sheet-title">${name}</h2><span class="sheet-price">${price}</span></div>` +
-    `<p class="sheet-kicker">${section.name} · ${section.sub}</p>` +
-    (desc ? `<p class="sheet-sub">${desc}</p>` : "") +
-    `<p class="sheet-desc">${long}</p>` +
-    (img ? creditLine(img) : "")
-  );
+  sheetList = FOOD_FLAT;
+  sheetIndex = FOOD_FLAT.findIndex((e) => e.item === item);
+  openSheet();
 }
 
 function openBeerSheet(family, item) {
-  const [name, style, abv, color, pal, long] = item;
-  const bars = PALETTE_AXES.map(([k, label]) =>
-    `<div class="pal-row"><span class="pal-label">${label}</span><span class="pal-track"><span class="pal-fill" style="width:${(pal[k] / 5) * 100}%"></span></span><span class="pal-val">${pal[k]}/5</span></div>`
-  ).join("");
-  openSheet(
-    `<div class="sheet-glass-wrap"><div class="glass" style="--beer:${color}"><span class="glass-foam"></span></div></div>` +
-    `<div class="sheet-head"><h2 id="sheet-title">${name}</h2><span class="abv abv-big">${abv}</span></div>` +
-    `<p class="sheet-kicker">${style} · ${family.family}</p>` +
-    `<div class="palette"><h3>Palette de goût</h3>${bars}</div>` +
-    `<p class="sheet-desc">${long}</p>`
-  );
+  sheetList = BEER_FLAT;
+  sheetIndex = BEER_FLAT.findIndex((e) => e.item === item);
+  openSheet();
 }
 
 function switchTab(id) {
@@ -413,6 +546,11 @@ document.querySelectorAll(".tab").forEach((t) => t.addEventListener("click", () 
 $("#search-input").addEventListener("input", (e) => applySearch(e.target.value));
 $("#sheet-close").addEventListener("click", closeSheet);
 $("#sheet-backdrop").addEventListener("click", closeSheet);
+$("#snav-prev").addEventListener("click", () => navigate(-1));
+$("#snav-next").addEventListener("click", () => navigate(1));
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && !$("#sheet").hidden) closeSheet();
+  if ($("#sheet").hidden) return;
+  if (e.key === "Escape") closeSheet();
+  else if (e.key === "ArrowLeft") navigate(-1);
+  else if (e.key === "ArrowRight") navigate(1);
 });
