@@ -118,5 +118,35 @@
   "artist": "Paasikivi",
   "license": "CC BY-SA 4.0",
   "url": "https://commons.wikimedia.org/wiki/File:Greek_salad_and_Tzatziki.jpg"
+ },
+ "env-1": {
+  "file": "Hamburger Dinner",
+  "artist": "Dana Tentis",
+  "license": "CC0",
+  "url": "https://stocksnap.io/photo/hamburger-dinner-7QH4K6AESO"
+ },
+ "env-2": {
+  "file": "File:DFC 1097 A juicy cheeseburger with lettuce on a sesame seed bun served on a wooden board with a side of fries and a cold drink.jpg",
+  "artist": "PattayaPatrol",
+  "license": "CC BY-SA 4.0",
+  "url": "https://commons.wikimedia.org/wiki/File:DFC_1097_A_juicy_cheeseburger_with_lettuce_on_a_sesame_seed_bun_served_on_a_wooden_board_with_a_side_of_fries_and_a_cold_drink.jpg"
+ },
+ "env-3": {
+  "file": "Hawksmoor 'bobcat burger'",
+  "artist": "theCSSdiv",
+  "license": "CC BY",
+  "url": "https://www.flickr.com/photos/92146798@N00/5520857960"
+ },
+ "env-4": {
+  "file": "beef burger bbq grill",
+  "artist": "Jakub Kapusnak",
+  "license": "CC0",
+  "url": "https://www.rawpixel.com/image/447974/beef-patties-grill"
+ },
+ "env-veg": {
+  "file": "Veggie Burger KCI_1551",
+  "artist": "kurmanstaff",
+  "license": "CC BY",
+  "url": "https://www.flickr.com/photos/62558987@N07/11740463705"
  }
 }

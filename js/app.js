@@ -219,9 +219,45 @@ const ICONS = {
   herb: '<path d="M12 20.5V8"/><path d="M12 12.5c-3 0-5.2-2.2-5.2-5.2 3 0 5.2 2.2 5.2 5.2z"/><path d="M12 16.5c3 0 5.2-2.2 5.2-5.2-3 0-5.2 2.2-5.2 5.2z"/>',
 };
 
-function icon(name, size = 24) {
-  return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ""}</svg>`;
+/* Couche de détail « planche naturaliste » — traits plus fins, hachures, nervures */
+const ICON_DETAIL = {
+  cheese: '<circle cx="12" cy="15.6" r="0.7"/><path d="M5.2 15.6l1.5-.9M7.2 16.4l1.3-.8M17.2 9v2"/>',
+  curds: '<path d="M5.6 15.6a2.6 2.6 0 0 0 2.3 1.4"/><path d="M10.9 10.6a2.4 2.4 0 0 0 2.1 1.1"/><path d="M15 16.1a2.6 2.6 0 0 0 2.3 1.2"/>',
+  bacon: '<path d="M6.6 10.4l.9-.5M11.6 10.6l.9-.5M16.6 10.2l.9-.5M6.6 14.4l.9-.5M11.6 14.6l.9-.5M16.6 14.2l.9-.5"/>',
+  mushroom: '<path d="M7.2 12.2l-.5 1.5M10.2 12.2v1.7M13.8 12.2v1.7M16.8 12.2l.5 1.5"/><circle cx="9.6" cy="8.6" r="0.5"/><circle cx="14.2" cy="7.9" r="0.5"/>',
+  onion: '<path d="M8.3 8.7c-1.2 1.3-1.9 2.9-1.9 4.8"/><path d="M15.7 8.7c1.2 1.3 1.9 2.9 1.9 4.8"/><path d="M10.9 19.3l-.5 1.3M12 19.4v1.4M13.1 19.3l.5 1.3"/>',
+  rings: '<path d="M6.3 9.7a4.8 4.8 0 0 0-1.5 2.3"/><path d="M17.7 9.7a4.8 4.8 0 0 1 1.5 2.3"/>',
+  avocado: '<circle cx="9.5" cy="12.8" r="0.35"/><circle cx="14.6" cy="12.1" r="0.35"/><circle cx="10.5" cy="17" r="0.35"/><path d="M10.9 13.9a2.3 2.3 0 0 1 1.3-1.5"/>',
+  chili: '<path d="M16.1 9.9c-.3 2.5-1.8 4.5-3.9 5.9"/><path d="M15.7 6.9l-1.1-.9M17.7 6.5l-.3-1.4"/>',
+  tomato: '<path d="M8.6 9.4c-1.4 1-2.3 2.4-2.3 4.1"/><path d="M15.4 9.4c1.4 1 2.3 2.4 2.3 4.1"/><circle cx="10.1" cy="13.6" r="0.35"/><circle cx="13.9" cy="13.6" r="0.35"/><circle cx="12" cy="16.1" r="0.35"/>',
+  apple: '<path d="M14.6 3.6c1.3.3 2.2 1.2 2.5 2.5-1.3-.3-2.2-1.2-2.5-2.5z"/><path d="M11.1 19.6c.4.3 1.5.3 1.9 0"/>',
+  pickle: '<path d="M10.5 5.6c-.3 4.4-.2 8.6.8 11.9"/><path d="M13.5 5.6c.3 4.4.2 8.6-.8 11.9"/>',
+  cabbage: '<path d="M8.7 7.2c-1.5 3.2-1.5 9.2 0 11.6"/><path d="M15.3 7.2c1.5 3.2 1.5 9.2 0 11.6"/>',
+  smoked: '<path d="M7.4 7.2h2.8M12.8 7.2h2.4M7.4 12h3.6M13.8 12h2M7.4 16.8h2.8M13.2 16.8h2.8"/>',
+  pork: '<path d="M6 16.9c1.5-1.7 2.7.5 4.2-1"/><path d="M12.4 16.7c1.3-1.3 2.5.4 3.8-1"/>',
+  maple: '<path d="M12 6.6V17"/><path d="M12 12.6l-3.3-2.1M12 12.6l3.3-2.1"/>',
+  flame: '<path d="M12 9.6c.5 1.9 2.3 2.5 2.3 4.4a2.3 2.3 0 0 1-4.6 0c0-1.4.9-1.9 1.5-3"/>',
+  drop: '<path d="M9.5 13.3c0 1.5.8 2.8 2.1 3.3"/><circle cx="17.4" cy="7.1" r="0.5"/><circle cx="6.6" cy="9.6" r="0.5"/>',
+  herb: '<path d="M9.6 9.9c.7.7 1.5 1.5 2.4 1.9M14.4 13.9c-.7.7-1.5 1.5-2.4 1.9"/>',
+};
+
+function icon(name, size = 24, detailed = false) {
+  const detail = detailed && ICON_DETAIL[name]
+    ? `<g stroke-width="0.9">${ICON_DETAIL[name]}</g>`
+    : "";
+  return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ""}${detail}</svg>`;
 }
+
+const ENV_OVERRIDES = { "Texan": "env-4", "Cow-boy": "env-4", "Buffalo": "env-4", "Végétarien": "env-veg" };
+function envFor(it, idx) {
+  return ENV_OVERRIDES[it.n] || `env-${(idx % 3) + 1}`;
+}
+const FILI_SPOTS = [
+  { t: "6%", l: "3%", r: -14, s: 112 },
+  { t: "40%", l: "72%", r: 10, s: 132 },
+  { t: "58%", l: "10%", r: 8, s: 92 },
+  { t: "4%", l: "66%", r: -8, s: 86 },
+];
 
 const $ = (sel, el = document) => el.querySelector(sel);
 const totalItems = FOOD.reduce((n, s) => n + s.items.length, 0) + BEERS.reduce((n, f) => n + f.items.length, 0);
@@ -374,14 +410,48 @@ function sheetHTML(entry) {
       `<p class="sheet-desc">${long}</p>`;
   }
   const it = entry.item;
-  const photo = it.ing
-    ? `<div class="ing-hero${it.ing.length > 3 ? " n4" : ""}" role="img" aria-label="Ingrédients : ${it.ing.map((x) => x[1]).join(", ")}">` +
-      it.ing.map(([ic, label]) => `<span class="ing-cell">${icon(ic, 38)}<span class="ing-l">${label}</span></span>`).join('<span class="ing-sep" aria-hidden="true"></span>') +
-      `</div>`
-    : it.img
-      ? `<div class="sheet-photo"><img src="img/${it.img}.jpg" alt="" loading="lazy"></div>`
-      : `<div class="sheet-photo art-only" style="background:${entry.ctx.art}"></div>`;
-  let html = photo +
+  let html;
+  if (it.ing) {
+    const idx = entry.ctx.items.indexOf(it);
+    const env = envFor(it, idx);
+    const fili = it.ing.slice(0, 4).map(([ic], i) => {
+      const p = FILI_SPOTS[i % FILI_SPOTS.length];
+      return `<span class="fili" style="top:${p.t};left:${p.l};transform:rotate(${p.r}deg)">${icon(ic, p.s, true)}</span>`;
+    }).join("");
+    const plate = it.ing.map(([ic, label], i) =>
+      `<span class="plate-cell"><span class="plate-no">N°${i + 1}</span>${icon(ic, 34, true)}<span class="plate-l">${label}</span></span>`
+    ).join("");
+    html =
+      `<div class="env-hero">` +
+        `<img class="env-img" src="img/${env}.jpg" alt="" draggable="false">` +
+        `<div class="env-fili" aria-hidden="true">${fili}</div>` +
+        `<div class="env-scrim" aria-hidden="true"></div>` +
+        `<div class="env-txt"><h2 id="sheet-title">${it.n}</h2><span class="env-price" id="sheet-total" aria-live="polite">${fmt(computeTotal(it))}</span></div>` +
+      `</div>` +
+      `<p class="sheet-kicker">${entry.ctx.name} · ${entry.ctx.sub}</p>` +
+      (it.d ? `<p class="sheet-sub">${it.d}</p>` : "") +
+      `<div class="plate" role="img" aria-label="Planche d'ingrédients : ${it.ing.map((x) => x[1]).join(", ")}">` +
+        `<span class="plate-t">Planche d'ingrédients</span>` +
+        `<span class="plate-row">${plate}</span>` +
+      `</div>` +
+      `<p class="sheet-desc">${it.long}</p>`;
+    // suite commune (configurateur, accord, crédit) ajoutée plus bas
+    let gid = 0;
+    (it.vgroups || []).forEach((g, gi) => {
+      const hid = `cfg-h-${gid++}`;
+      html += `<div class="cfg" role="group" aria-labelledby="${hid}"><h3 id="${hid}">${g.t}</h3><div class="opts">` +
+        g.opts.map(([label, delta], oi) =>
+          `<button type="button" class="opt${(cfg.v[gi] || 0) === oi ? " on" : ""}" data-vg="${gi}" data-oi="${oi}" aria-pressed="${(cfg.v[gi] || 0) === oi}"><span>${label}</span><span class="opt-p">${delta ? "+" + fmt(delta) : ""}</span></button>`).join("") +
+        `</div></div>`;
+    });
+    html += pairingHTML(it);
+    html += creditLine(env);
+    return html;
+  }
+  const photo = it.img
+    ? `<div class="sheet-photo"><img src="img/${it.img}.jpg" alt="" loading="lazy"></div>`
+    : `<div class="sheet-photo art-only" style="background:${entry.ctx.art}"></div>`;
+  html = photo +
     `<div class="sheet-head"><h2 id="sheet-title">${it.n}</h2><span class="sheet-price" id="sheet-total" aria-live="polite">${fmt(computeTotal(it))}</span></div>` +
     `<p class="sheet-kicker">${entry.ctx.name} · ${entry.ctx.sub}</p>` +
     (it.d ? `<p class="sheet-sub">${it.d}</p>` : "") +
